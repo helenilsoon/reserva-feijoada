@@ -1,10 +1,14 @@
 import { sql } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-export async function PATCH(req: Request) {
+export async function PATCH(
+    req: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
+        const { id } = await params;
         const body = await req.json();
-        const { id, payment_status, pickup_status } = body;
+        const { payment_status, pickup_status } = body;
 
         if (!id) {
             return NextResponse.json({ error: 'ID é obrigatório.' }, { status: 400 });
@@ -26,10 +30,10 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const id = params.id;
+        const { id } = await params;
         if (!id) {
             return NextResponse.json({ error: 'ID é obrigatório.' }, { status: 400 });
         }

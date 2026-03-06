@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const id = params.id;
+        const { id } = await params;
         const result = await sql`SELECT payment_status FROM reservations WHERE id = ${id}`;
 
         if (result.length === 0) {
