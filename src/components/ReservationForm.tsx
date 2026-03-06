@@ -78,7 +78,7 @@ export default function ReservationForm() {
                         setShowModal(true);
                         setMessage({ type: 'success', text: 'Reserva feita! Conclua o pagamento abaixo.' });
                     } else {
-                        setMessage({ type: 'error', text: 'Reserva feita, mas erro ao gerar PIX automático. Use a opção manual ou fale conosco.' });
+                        setMessage({ type: 'error', text: checkoutData.error || 'Erro ao gerar PIX. Tente a opção manual.' });
                     }
                 } else {
                     setMessage({ type: 'success', text: 'Reserva confirmada! Você pode realizar o pagamento manualmente ou na retirada.' });
@@ -124,7 +124,7 @@ export default function ReservationForm() {
                     />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '15px' }}>
                     <div className="input-group">
                         <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>WhatsApp</label>
                         <input

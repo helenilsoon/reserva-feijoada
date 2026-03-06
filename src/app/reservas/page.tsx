@@ -120,10 +120,10 @@ export default function AdminPage() {
     return (
         <main>
             <Header />
-            <section style={{ padding: '120px 20px', minHeight: '100vh', background: 'var(--background)' }}>
-                <div className="glass-card" style={{ maxWidth: '1250px', margin: '0 auto', padding: '40px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-                        <h1 className="brand" style={{ fontSize: '2.5rem', margin: 0 }}>Pedidos Recebidos</h1>
+            <section style={{ padding: '100px 12px 60px', minHeight: '100vh', background: 'var(--background)' }}>
+                <div className="glass-card" style={{ maxWidth: '1250px', margin: '0 auto', padding: '24px 16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+                        <h1 className="brand" style={{ fontSize: '1.8rem', margin: 0 }}>Pedidos Recebidos</h1>
                         <div style={{ textAlign: 'right' }}>
                             <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>Total: {reservations.length}</span>
                             <br />
@@ -135,7 +135,7 @@ export default function AdminPage() {
                         <p style={{ textAlign: 'center', padding: '40px' }}>Carregando pedidos...</p>
                     ) : (
                         <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '720px' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '2px solid var(--glass-border)', color: 'var(--primary)' }}>
                                         <th style={{ padding: '15px' }}>ID</th>

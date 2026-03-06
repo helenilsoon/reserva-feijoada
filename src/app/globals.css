@@ -2,18 +2,12 @@
 
 :root {
   --primary: #d4a017;
-  /* Gold/Ocre from flyer */
   --primary-dark: #b8860b;
   --secondary: #4a3728;
-  /* Deep brown */
   --accent: #e67e22;
-  /* Burnt orange */
   --background: #1a1410;
-  /* Very dark wood/earth */
   --surface: #2c1e16;
-  /* Wood texture base */
   --text: #f5e6d3;
-  /* Antique white/parchment */
   --text-muted: #a68b7c;
   --glass: rgba(44, 30, 22, 0.7);
   --glass-border: rgba(212, 160, 23, 0.2);
@@ -80,19 +74,27 @@ button {
   border: none;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+button:active {
+  transform: translateY(0);
+}
+
+@media (hover: hover) {
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+  }
 }
 
 .btn-primary {
   background-color: var(--primary);
-  color: white;
+  color: #1a1410;
   padding: 12px 24px;
+  font-weight: 700;
 }
 
+/* ── HERO ─────────────────────────────── */
 .hero {
-  height: 100vh;
+  height: 100svh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -117,20 +119,94 @@ button:hover {
   padding: 0 20px;
 }
 
-.hero h1 {
-  font-size: 5rem;
-  margin-bottom: 20px;
-  line-height: 1;
+/* ── DESKTOP HERO TEXT ─────────────────── */
+.hero-title-main {
+  font-size: 4.5rem;
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  margin-bottom: 0;
+  line-height: 1.1;
 }
 
-.hero p {
-  font-size: 1.25rem;
+.hero-title-sub {
+  font-size: 3.5rem;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  margin-top: -10px;
+  color: var(--primary);
+}
+
+/* ── HEADER ────────────────────────────── */
+.header-nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.header-nav a {
   color: var(--text-muted);
-  margin-bottom: 40px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+  white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 3rem;
+.header-nav a:hover {
+  color: var(--primary);
+}
+
+/* ── ADMIN TABLE ───────────────────────── */
+.admin-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 720px;
+}
+
+/* ── INPUT STYLES ──────────────────────── */
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 16px;
+  /* prevent zoom on iOS */
+}
+
+/* ── MOBILE ────────────────────────────── */
+@media (max-width: 640px) {
+  .hero-title-main {
+    font-size: 2.8rem;
+  }
+
+  .hero-title-sub {
+    font-size: 2.2rem;
+  }
+
+  .header-nav a:not(.header-cta) {
+    display: none;
+  }
+
+  .glass-card {
+    border-radius: 16px;
+  }
+
+  .section-pad {
+    padding: 60px 16px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-action-col {
+    flex-direction: column;
+    gap: 6px;
   }
 }

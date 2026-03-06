@@ -10,36 +10,38 @@ export default function Home() {
       {/* Hero Section */}
       <section className="hero" style={{ backgroundImage: 'url("/hero-bg.png")' }}>
         <div className="hero-content animate-fade">
-          <h1 className="brand" style={{ fontSize: '1.2rem', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '4px' }}>Legendário</h1>
-          <h2 style={{ fontSize: '4.5rem', fontFamily: 'Playfair Display', fontWeight: 900, marginBottom: '0' }}>FEIJOADA</h2>
-          <h2 style={{ fontSize: '3.5rem', fontFamily: 'Playfair Display', fontStyle: 'italic', marginTop: '-10px', color: 'var(--primary)' }}>Solidária</h2>
-          <p style={{ marginTop: '20px', fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--text)' }}>
+          <h1 className="brand" style={{ fontSize: '1rem', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '4px', color: 'var(--primary)' }}>Legendário</h1>
+          <h2 className="hero-title-main">FEIJOADA</h2>
+          <h2 className="hero-title-sub">Solidária</h2>
+          <p style={{ marginTop: '16px', fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text)', letterSpacing: '2px' }}>
             RUMO AO LEGENDÁRIO!
           </p>
-          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '30px' }}>
-            <a href="#reservar" className="btn-primary" style={{ textDecoration: 'none', background: 'var(--primary)', padding: '15px 40px', fontSize: '1.1rem' }}>Fazer Meu Pedido</a>
+          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '28px' }}>
+            <a href="#reservar" className="btn-primary" style={{ textDecoration: 'none', padding: '14px 36px', fontSize: '1rem', borderRadius: '12px', fontWeight: '700' }}>
+              Fazer Meu Pedido
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Info Section */}
-      <section id="info" style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <div className="glass-card animate-fade" style={{ maxWidth: '900px', margin: '0 auto', padding: '40px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-            <div style={{ padding: '20px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📅</div>
-              <h3>Domingo, 08/03</h3>
-              <p style={{ color: 'var(--text-muted)' }}>A partir das 11h</p>
+      {/* Info Cards */}
+      <section id="info" className="section-pad" style={{ textAlign: 'center' }}>
+        <div className="glass-card animate-fade" style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '20px' }}>
+            <div style={{ padding: '16px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📅</div>
+              <h3 style={{ fontSize: '1rem' }}>Domingo, 08/03</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>A partir das 11h</p>
             </div>
-            <div style={{ padding: '20px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🏷️</div>
-              <h3>Valor: R$ 20,00</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Individual</p>
+            <div style={{ padding: '16px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🏷️</div>
+              <h3 style={{ fontSize: '1rem' }}>R$ 20,00</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Por marmita</p>
             </div>
-            <div style={{ padding: '20px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '10px' }}>⛪</div>
-              <h3>Retirada na Igreja</h3>
-              <p style={{ color: 'var(--text-muted)' }}>Local de entrega</p>
+            <div style={{ padding: '16px' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⛪</div>
+              <h3 style={{ fontSize: '1rem' }}>Retirada na Igreja</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Local de entrega</p>
             </div>
           </div>
         </div>
@@ -50,41 +52,43 @@ export default function Home() {
         href="https://wa.me/5592993914928?text=Olá! Gostaria de informações sobre a Feijoada Solidária."
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Falar no WhatsApp"
         style={{
           position: 'fixed',
-          bottom: '30px',
-          right: '30px',
+          bottom: '24px',
+          right: '20px',
           backgroundColor: '#25d366',
-          width: '60px',
-          height: '60px',
+          width: '56px',
+          height: '56px',
           borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
           zIndex: 100,
-          fontSize: '2rem'
+          fontSize: '1.8rem',
+          textDecoration: 'none'
         }}
       >
         💬
       </a>
 
-      {/* Reservation Placeholder */}
-      <section id="reservar" style={{ padding: '100px 20px', background: 'var(--surface)' }}>
-        <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Faça sua Reserva</h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '40px' }}>
-            Selecione a data e o horário para garantir sua mesa.
+      {/* Reservation Section */}
+      <section id="reservar" className="section-pad" style={{ background: 'var(--surface)' }}>
+        <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center', padding: '0 16px' }}>
+          <h2 style={{ fontSize: '2rem', marginBottom: '12px' }}>Faça sua Reserva</h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '0.95rem' }}>
+            Garanta já sua marmita para o evento!
           </p>
-          <div className="glass-card" style={{ padding: '40px' }}>
+          <div className="glass-card" style={{ padding: '28px 24px' }}>
             <ReservationForm />
           </div>
         </div>
       </section>
 
-      <footer style={{ padding: '40px', textAlign: 'center', backgroundColor: '#0a0c10', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-        <p>&copy; 2026 Sabor & Tradição - Todos os direitos reservados.</p>
-        <Link href="/reservas" style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.7rem', textDecoration: 'none', marginTop: '10px', display: 'inline-block' }}>
+      <footer style={{ padding: '36px 20px', textAlign: 'center', backgroundColor: '#0a0c10', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+        <p>© 2026 Sabor & Tradição - Todos os direitos reservados.</p>
+        <Link href="/reservas" style={{ color: 'rgba(255,255,255,0.15)', fontSize: '0.7rem', textDecoration: 'none', marginTop: '8px', display: 'inline-block' }}>
           Reservas
         </Link>
       </footer>
