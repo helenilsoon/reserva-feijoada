@@ -1,0 +1,4 @@
+#Sat Mar 07 02:12:08 AMT 2026
+base.0=/home/helenilson/Documentos/projetos/reserva-feijoada/android-app/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

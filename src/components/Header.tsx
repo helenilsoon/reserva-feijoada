@@ -38,8 +38,8 @@ export default function Header() {
             {/* Desktop Nav */}
             <nav style={{ display: 'flex', gap: '32px', alignItems: 'center' }} className="desktop-nav">
                 <Link href="/" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Início</Link>
-                <Link href="/#info" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Cardápio</Link>
-                <Link href="/#reservar" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Fazer Reserva</Link>
+                <Link href="/menu" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Cardápio</Link>
+                <Link href="/reservar" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Fazer Reserva</Link>
                 <Link href="/reservas" style={{ color: 'var(--primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>📦 Consultar Pedidos</Link>
             </nav>
 
@@ -147,7 +147,7 @@ export default function Header() {
             <style>{`
                 @media (max-width: 768px) {
                     .desktop-nav { display: none !important; }
-                    .hamburger-btn { display: flex !important; }
+                    .hamburger-btn { display: none !important; }
                 }
             `}</style>
         </header>
