@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.reservafeijoada.twa",
+            "sha256_cert_fingerprints": [
+                "FE:D4:00:C4:0B:0A:84:5E:24:50:83:98:A8:59:51:D8:39:10:EF:D9:07:0C:AB:18:FD:DE:93:8A:05:E9:A5:68"
+            ]
+        }
+    }
+]
