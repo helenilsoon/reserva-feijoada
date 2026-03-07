@@ -8,7 +8,7 @@ export async function PATCH(
     try {
         const { id } = await params;
         const body = await req.json();
-        const { payment_status, pickup_status } = body;
+        const { payment_status, pickup_status, customer_name, phone, guests } = body;
 
         if (!id) {
             return NextResponse.json({ error: 'ID é obrigatório.' }, { status: 400 });
@@ -22,7 +22,19 @@ export async function PATCH(
             await sql`UPDATE reservations SET pickup_status = ${pickup_status} WHERE id = ${id}`;
         }
 
-        return NextResponse.json({ message: 'Status atualizado.' });
+        if (customer_name !== undefined) {
+            await sql`UPDATE reservations SET customer_name = ${customer_name} WHERE id = ${id}`;
+        }
+
+        if (phone !== undefined) {
+            await sql`UPDATE reservations SET phone = ${phone} WHERE id = ${id}`;
+        }
+
+        if (guests !== undefined) {
+            await sql`UPDATE reservations SET guests = ${guests} WHERE id = ${id}`;
+        }
+
+        return NextResponse.json({ message: 'Reserva atualizada com sucesso.' });
     } catch (error) {
         return NextResponse.json({ error: 'Erro ao atualizar status.' }, { status: 500 });
     }

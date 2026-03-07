@@ -9,16 +9,25 @@ interface Toast {
     exiting?: boolean;
 }
 
-export default function ReservationForm() {
+export default function ReservationForm({
+    reservation,
+    onSuccess
+}: {
+    reservation?: { id: number; customer_name: string; phone: string; guests: number };
+    onSuccess?: () => void;
+}) {
     const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
+        name: reservation?.customer_name || '',
+        phone: reservation?.phone || '',
         date: '2026-03-08',
         time: '11:00',
-        guests: 1
+        guests: reservation?.guests || 1
     });
     const [loading, setLoading] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
+
+    const MARMITA_PRICE = 35.00;
+    const totalPrice = formData.guests * MARMITA_PRICE;
 
     // Format phone as (XX) XXXXX-XXXX
     const formatPhone = (value: string) => {
@@ -44,7 +53,7 @@ export default function ReservationForm() {
     const [showModal, setShowModal] = useState(false);
     const [pixData, setPixData] = useState<{ qr_code: string, qr_code_base64: string, ticket_url: string } | null>(null);
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
-    const [reservationId, setReservationId] = useState<number | null>(null);
+    const [reservationId, setReservationId] = useState<number | null>(reservation?.id || null);
 
     // Polling for payment status
     useEffect(() => {
@@ -86,45 +95,64 @@ export default function ReservationForm() {
         }
 
         try {
-            // 1. Create Reservation
-            const res = await fetch('/api/reservations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+            if (reservation?.id) {
+                // Update existing reservation
+                const res = await fetch(`/api/reservations/${reservation.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer_name: formData.name,
+                        phone: formData.phone,
+                        guests: formData.guests
+                    }),
+                });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                setReservationId(data.id);
-
-                if (payNow) {
-                    // 2. Create PIX payment
-                    const checkoutRes = await fetch('/api/checkout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            reservationId: data.id,
-                            guests: formData.guests,
-                            name: formData.name
-                        }),
-                    });
-
-                    const checkoutData = await checkoutRes.json();
-
-                    if (checkoutRes.ok && checkoutData.qr_code) {
-                        setPixData(checkoutData);
-                        setShowModal(true);
-                        showToast('info', 'Quase lá! Escaneie o PIX para concluir.');
-                    } else {
-                        showToast('error', checkoutData.error || 'Erro ao gerar PIX. Tente novamente.');
-                    }
+                if (res.ok) {
+                    showToast('success', '✅ Reserva atualizada com sucesso!');
+                    onSuccess?.();
                 } else {
-                    showToast('success', '✅ Reserva feita! Pague na retirada ou via PIX depois.');
-                    setFormData({ name: '', phone: '', date: '2026-03-08', time: '11:00', guests: 1 });
+                    showToast('error', 'Erro ao atualizar reserva.');
                 }
             } else {
-                showToast('error', data.error || 'Erro ao realizar reserva.');
+                // Create new reservation
+                const res = await fetch('/api/reservations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    setReservationId(data.id);
+
+                    if (payNow) {
+                        const checkoutRes = await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                reservationId: data.id,
+                                guests: formData.guests,
+                                name: formData.name
+                            }),
+                        });
+
+                        const checkoutData = await checkoutRes.json();
+
+                        if (checkoutRes.ok && checkoutData.qr_code) {
+                            setPixData(checkoutData);
+                            setShowModal(true);
+                            showToast('info', 'Quase lá! Escaneie o PIX para concluir.');
+                        } else {
+                            showToast('error', checkoutData.error || 'Erro ao gerar PIX. Tente novamente.');
+                        }
+                    } else {
+                        showToast('success', '✅ Reserva feita! Pague na retirada ou via PIX depois.');
+                        setFormData({ name: '', phone: '', date: '2026-03-08', time: '11:00', guests: 1 });
+                    }
+                } else {
+                    showToast('error', data.error || 'Erro ao realizar reserva.');
+                }
             }
         } catch (error) {
             console.error('Submit error:', error);
@@ -147,7 +175,7 @@ export default function ReservationForm() {
                     border: '1px solid rgba(212, 160, 23, 0.4)',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
                 }}>
-                    <h3 style={{ color: 'var(--primary)', marginBottom: '8px', fontSize: '1.4rem' }}>Feijoada Solidária</h3>
+                    <h3 style={{ color: 'var(--primary)', marginBottom: '8px', fontSize: '1.4rem' }}>{reservation ? 'Editar Reserva' : 'Feijoada Solidária'}</h3>
                     <p style={{ fontWeight: '700', fontSize: '1.15rem', color: 'white' }}>📅 Domingo, 08/03 às 11:00</p>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '4px' }}>Local: Retirada na Igreja</p>
                 </div>
@@ -201,35 +229,55 @@ export default function ReservationForm() {
                     </div>
                 </div>
 
+                {/* Total Price Display */}
+                <div style={{
+                    textAlign: 'right',
+                    padding: '12px 0',
+                    borderTop: '1px solid var(--glass-border)',
+                    marginTop: '5px'
+                }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Total do Pedido: </span>
+                    <span style={{
+                        color: 'var(--primary)',
+                        fontSize: '1.25rem',
+                        fontWeight: '800',
+                        textShadow: '0 0 10px rgba(212, 160, 23, 0.3)'
+                    }}>
+                        R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </span>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                     <button
-                        onClick={(e) => handleSubmit(e, true)}
+                        onClick={(e) => handleSubmit(e, !reservation?.id)}
                         type="button"
                         className="btn-primary"
                         disabled={loading}
                         style={{ width: '100%', fontSize: '1.05rem', padding: '18px', borderRadius: '14px' }}
                     >
-                        {loading ? 'Processando...' : 'Gera QR Code pro PIX 📲'}
+                        {loading ? 'Processando...' : reservation ? 'Salvar Alterações 💾' : 'Gera QR Code pro PIX 📲'}
                     </button>
 
-                    <button
-                        onClick={(e) => handleSubmit(e, false)}
-                        type="button"
-                        disabled={loading}
-                        style={{
-                            width: '100%',
-                            fontSize: '0.9rem',
-                            padding: '14px',
-                            background: 'transparent',
-                            border: '1px solid var(--glass-border)',
-                            color: 'var(--text-muted)',
-                            borderRadius: '12px',
-                            cursor: 'pointer',
-                            fontWeight: 600
-                        }}
-                    >
-                        Pagar Depois / Na Retirada
-                    </button>
+                    {!reservation && (
+                        <button
+                            onClick={(e) => handleSubmit(e, false)}
+                            type="button"
+                            disabled={loading}
+                            style={{
+                                width: '100%',
+                                fontSize: '0.9rem',
+                                padding: '14px',
+                                background: 'transparent',
+                                border: '1px solid var(--glass-border)',
+                                color: 'var(--text-muted)',
+                                borderRadius: '12px',
+                                cursor: 'pointer',
+                                fontWeight: 600
+                            }}
+                        >
+                            Pagar Depois / Na Retirada
+                        </button>
+                    )}
                 </div>
             </form>
 
