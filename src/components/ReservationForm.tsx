@@ -13,6 +13,17 @@ export default function ReservationForm() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
+    // Format phone as (XX) XXXXX-XXXX
+    const formatPhone = (value: string) => {
+        const digits = value.replace(/\D/g, '').slice(0, 11);
+        if (digits.length <= 2) return digits;
+        if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    };
+
+    const isPhoneValid = (phone: string) => phone.replace(/\D/g, '').length === 11;
+
+
     // Payment Modal State
     const [showModal, setShowModal] = useState(false);
     const [pixData, setPixData] = useState<{ qr_code: string, qr_code_base64: string, ticket_url: string } | null>(null);
@@ -45,6 +56,12 @@ export default function ReservationForm() {
         e.preventDefault();
         setLoading(true);
         setMessage({ type: '', text: '' });
+
+        if (!isPhoneValid(formData.phone)) {
+            setMessage({ type: 'error', text: 'Informe um número de celular válido com DDD: (XX) XXXXX-XXXX' });
+            setLoading(false);
+            return;
+        }
 
         try {
             // 1. Create Reservation
@@ -130,11 +147,22 @@ export default function ReservationForm() {
                         <input
                             type="tel"
                             required
+                            inputMode="numeric"
                             value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                            placeholder="(00) 00000-0000"
-                            style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }}
+                            onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
+                            placeholder="(92) 99999-9999"
+                            style={{
+                                width: '100%', padding: '12px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: `1px solid ${formData.phone.length > 0 ? (isPhoneValid(formData.phone) ? '#25d366' : '#e74c3c') : 'var(--glass-border)'}`,
+                                borderRadius: '8px', color: 'white'
+                            }}
                         />
+                        {formData.phone.length > 0 && !isPhoneValid(formData.phone) && (
+                            <span style={{ fontSize: '0.75rem', color: '#e74c3c', marginTop: '4px', display: 'block' }}>
+                                Número incompleto — ex: (92) 99999-9999
+                            </span>
+                        )}
                     </div>
                     <div className="input-group">
                         <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Marmitas</label>
