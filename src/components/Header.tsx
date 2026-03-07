@@ -28,8 +28,7 @@ export default function Header() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: 'linear-gradient(to bottom, rgba(15, 17, 21, 0.95), rgba(15,17,21,0.6))',
-            backdropFilter: 'blur(8px)',
+            background: 'linear-gradient(to bottom, rgba(15, 17, 21, 0.97), rgba(15,17,21,0.65))',
         }}>
             {/* Logo */}
             <Link href="/" onClick={closeMenu} className="brand" style={{ fontSize: '1.3rem', fontWeight: 'bold', color: 'var(--primary)', textDecoration: 'none' }}>
@@ -108,10 +107,11 @@ export default function Header() {
                     width: '75%',
                     maxWidth: '300px',
                     height: '100%',
-                    background: '#150d08',
-                    borderLeft: '1px solid var(--glass-border)',
-                    boxShadow: '-8px 0 32px rgba(0,0,0,0.6)',
+                    background: 'rgb(21, 13, 8)',
+                    borderLeft: '1px solid rgba(212,160,23,0.3)',
+                    boxShadow: '-12px 0 40px rgba(0,0,0,0.8)',
                     zIndex: 250,
+                    isolation: 'isolate',
                     padding: '80px 28px 40px',
                     display: 'flex',
                     flexDirection: 'column',
