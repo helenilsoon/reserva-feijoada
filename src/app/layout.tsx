@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Reserva de Feijoada | Sabor & Tradição",
   description: "Reserve sua feijoada completa com o melhor sabor da região.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

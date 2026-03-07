@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+interface Toast {
+    id: number;
+    type: 'success' | 'error' | 'info';
+    text: string;
+    exiting?: boolean;
+}
 
 export default function ReservationForm() {
     const [formData, setFormData] = useState({
@@ -11,7 +18,7 @@ export default function ReservationForm() {
         guests: 1
     });
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ type: '', text: '' });
+    const [toasts, setToasts] = useState<Toast[]>([]);
 
     // Format phone as (XX) XXXXX-XXXX
     const formatPhone = (value: string) => {
@@ -23,6 +30,15 @@ export default function ReservationForm() {
 
     const isPhoneValid = (phone: string) => phone.replace(/\D/g, '').length === 11;
 
+    // Toasts
+    const showToast = useCallback((type: Toast['type'], text: string) => {
+        const id = Date.now();
+        setToasts(prev => [...prev, { id, type, text }]);
+        setTimeout(() => {
+            setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
+            setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 350);
+        }, 4000);
+    }, []);
 
     // Payment Modal State
     const [showModal, setShowModal] = useState(false);
@@ -41,6 +57,7 @@ export default function ReservationForm() {
                     const data = await res.json();
                     if (data.status === 'Pago') {
                         setPaymentConfirmed(true);
+                        showToast('success', '🏆 Reserva garantida! Pagamento confirmado.');
                         clearInterval(interval);
                     }
                 } catch (error) {
@@ -50,15 +67,20 @@ export default function ReservationForm() {
         }
 
         return () => clearInterval(interval);
-    }, [showModal, reservationId, paymentConfirmed]);
+    }, [showModal, reservationId, paymentConfirmed, showToast]);
 
     const handleSubmit = async (e: React.FormEvent, payNow: boolean) => {
         e.preventDefault();
         setLoading(true);
-        setMessage({ type: '', text: '' });
 
         if (!isPhoneValid(formData.phone)) {
-            setMessage({ type: 'error', text: 'Informe um número de celular válido com DDD: (XX) XXXXX-XXXX' });
+            showToast('error', 'Informe um celular válido: (XX) XXXXX-XXXX');
+            setLoading(false);
+            return;
+        }
+
+        if (!formData.name.trim()) {
+            showToast('error', 'Por favor, informe seu nome.');
             setLoading(false);
             return;
         }
@@ -93,20 +115,20 @@ export default function ReservationForm() {
                     if (checkoutRes.ok && checkoutData.qr_code) {
                         setPixData(checkoutData);
                         setShowModal(true);
-                        setMessage({ type: 'success', text: 'Reserva feita! Conclua o pagamento abaixo.' });
+                        showToast('info', 'Quase lá! Escaneie o PIX para concluir.');
                     } else {
-                        setMessage({ type: 'error', text: checkoutData.error || 'Erro ao gerar PIX. Tente a opção manual.' });
+                        showToast('error', checkoutData.error || 'Erro ao gerar PIX. Tente novamente.');
                     }
                 } else {
-                    setMessage({ type: 'success', text: 'Reserva confirmada! Você pode realizar o pagamento manualmente ou na retirada.' });
+                    showToast('success', '✅ Reserva feita! Pague na retirada ou via PIX depois.');
                     setFormData({ name: '', phone: '', date: '2026-03-08', time: '11:00', guests: 1 });
                 }
             } else {
-                setMessage({ type: 'error', text: data.error || 'Erro ao realizar reserva.' });
+                showToast('error', data.error || 'Erro ao realizar reserva.');
             }
         } catch (error) {
             console.error('Submit error:', error);
-            setMessage({ type: 'error', text: 'Erro de conexão.' });
+            showToast('error', 'Erro de conexão com o servidor.');
         } finally {
             setLoading(false);
         }
@@ -114,19 +136,20 @@ export default function ReservationForm() {
 
     return (
         <div style={{ position: 'relative' }}>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
+            <form className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
                 {/* Event Info Header */}
-                <div style={{
+                <div className="animate-glow" style={{
                     textAlign: 'center',
-                    padding: '20px',
-                    background: 'rgba(212, 160, 23, 0.1)',
-                    borderRadius: '12px',
+                    padding: '24px',
+                    background: 'rgba(212, 160, 23, 0.08)',
+                    borderRadius: '20px',
                     marginBottom: '10px',
-                    border: '1px solid var(--primary)'
+                    border: '1px solid rgba(212, 160, 23, 0.4)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
                 }}>
-                    <h3 style={{ color: 'var(--primary)', marginBottom: '5px' }}>Feijoada Solidária</h3>
-                    <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>📅 Domingo, 08/03 às 11:00</p>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Local: Retirada na Igreja</p>
+                    <h3 style={{ color: 'var(--primary)', marginBottom: '8px', fontSize: '1.4rem' }}>Feijoada Solidária</h3>
+                    <p style={{ fontWeight: '700', fontSize: '1.15rem', color: 'white' }}>📅 Domingo, 08/03 às 11:00</p>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '4px' }}>Local: Retirada na Igreja</p>
                 </div>
 
                 <div className="input-group">
@@ -136,8 +159,8 @@ export default function ReservationForm() {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Seu nome aqui"
-                        style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }}
+                        placeholder="Ex: João Silva"
+                        style={{ width: '100%', padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'white' }}
                     />
                 </div>
 
@@ -152,15 +175,15 @@ export default function ReservationForm() {
                             onChange={(e) => setFormData({ ...formData, phone: formatPhone(e.target.value) })}
                             placeholder="(92) 99999-9999"
                             style={{
-                                width: '100%', padding: '12px',
+                                width: '100%', padding: '14px',
                                 background: 'rgba(255,255,255,0.05)',
                                 border: `1px solid ${formData.phone.length > 0 ? (isPhoneValid(formData.phone) ? '#25d366' : '#e74c3c') : 'var(--glass-border)'}`,
-                                borderRadius: '8px', color: 'white'
+                                borderRadius: '12px', color: 'white'
                             }}
                         />
                         {formData.phone.length > 0 && !isPhoneValid(formData.phone) && (
-                            <span style={{ fontSize: '0.75rem', color: '#e74c3c', marginTop: '4px', display: 'block' }}>
-                                Número incompleto — ex: (92) 99999-9999
+                            <span style={{ fontSize: '0.75rem', color: '#e74c3c', marginTop: '6px', display: 'block', animation: 'fadeInDown 0.3s ease' }}>
+                                Número incompleto
                             </span>
                         )}
                     </div>
@@ -172,34 +195,21 @@ export default function ReservationForm() {
                             max="50"
                             required
                             value={formData.guests}
-                            onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) })}
-                            style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }}
+                            onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) || 1 })}
+                            style={{ width: '100%', padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'white' }}
                         />
                     </div>
                 </div>
 
-                {message.text && (
-                    <div style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        fontSize: '0.9rem',
-                        backgroundColor: message.type === 'success' ? 'rgba(46, 204, 113, 0.2)' : 'rgba(231, 76, 60, 0.2)',
-                        color: message.type === 'success' ? '#2ecc71' : '#e74c3c',
-                        border: `1px solid ${message.type === 'success' ? '#2ecc71' : '#e74c3c'}`
-                    }}>
-                        {message.text}
-                    </div>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
                     <button
                         onClick={(e) => handleSubmit(e, true)}
                         type="button"
                         className="btn-primary"
                         disabled={loading}
-                        style={{ width: '100%', fontSize: '1rem', padding: '15px' }}
+                        style={{ width: '100%', fontSize: '1.05rem', padding: '18px', borderRadius: '14px' }}
                     >
-                        {loading ? 'Processando...' : 'Gera QR Code pro PIX'}
+                        {loading ? 'Processando...' : 'Gera QR Code pro PIX 📲'}
                     </button>
 
                     <button
@@ -209,15 +219,16 @@ export default function ReservationForm() {
                         style={{
                             width: '100%',
                             fontSize: '0.9rem',
-                            padding: '12px',
+                            padding: '14px',
                             background: 'transparent',
                             border: '1px solid var(--glass-border)',
                             color: 'var(--text-muted)',
-                            borderRadius: '8px',
-                            cursor: 'pointer'
+                            borderRadius: '12px',
+                            cursor: 'pointer',
+                            fontWeight: 600
                         }}
                     >
-                        Apenas Reservar
+                        Pagar Depois / Na Retirada
                     </button>
                 </div>
             </form>
@@ -230,85 +241,82 @@ export default function ReservationForm() {
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    background: 'rgba(0,0,0,0.85)',
+                    background: 'rgba(0,0,0,0.9)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    zIndex: 1000,
+                    zIndex: 2000,
                     padding: '20px'
                 }}>
-                    <div className="glass-card" style={{
-                        maxWidth: '400px',
+                    <div className="glass-card animate-bounce" style={{
+                        maxWidth: '420px',
                         width: '100%',
-                        padding: '30px',
+                        padding: '40px 30px',
                         textAlign: 'center',
-                        border: paymentConfirmed ? '2px solid #2ecc71' : '1px solid var(--glass-border)'
+                        border: paymentConfirmed ? '2px solid #25d366' : '1px solid var(--glass-border)',
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.8)'
                     }}>
                         {!paymentConfirmed ? (
                             <>
-                                <h3 style={{ color: 'var(--primary)', marginBottom: '15px' }}>Pagamento via PIX</h3>
-                                <p style={{ fontSize: '0.9rem', marginBottom: '20px' }}>
+                                <h3 style={{ color: 'var(--primary)', marginBottom: '15px', fontSize: '1.5rem', fontFamily: 'Playfair Display' }}>Pagamento PIX</h3>
+                                <p style={{ fontSize: '0.95rem', marginBottom: '25px', color: 'var(--text-muted)' }}>
                                     Escaneie o QR Code abaixo ou copie a chave PIX para finalizar sua reserva.
                                 </p>
 
                                 {pixData ? (
-                                    <div style={{ background: 'white', padding: '15px', borderRadius: '12px', display: 'inline-block', marginBottom: '20px' }}>
+                                    <div style={{ background: 'white', padding: '20px', borderRadius: '24px', display: 'inline-block', marginBottom: '25px', boxShadow: '0 0 40px rgba(212, 160, 23, 0.2)' }}>
                                         <img
                                             src={`data:image/png;base64,${pixData.qr_code_base64}`}
                                             alt="QR Code PIX"
-                                            style={{ width: '200px', height: '200px' }}
+                                            style={{ width: '220px', height: '220px' }}
                                         />
                                     </div>
                                 ) : (
-                                    <p>Carregando QR Code...</p>
+                                    <div style={{ height: '260px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <div style={{ width: '40px', height: '40px', border: '4px solid var(--glass-border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                    </div>
                                 )}
 
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <button
                                         onClick={() => {
                                             if (pixData) {
                                                 navigator.clipboard.writeText(pixData.qr_code);
-                                                alert('Chave PIX copiada!');
+                                                showToast('success', 'Chave PIX copiada! 📋');
                                             }
                                         }}
-                                        style={{
-                                            padding: '12px',
-                                            background: 'var(--primary)',
-                                            color: 'black',
-                                            border: 'none',
-                                            borderRadius: '8px',
-                                            fontWeight: 'bold',
-                                            cursor: 'pointer'
-                                        }}
+                                        className="btn-primary"
+                                        style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
                                     >
                                         Copiar Chave PIX
                                     </button>
 
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '10px' }}>
-                                        Aguardando confirmação do pagamento...
-                                    </p>
+                                    <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                        <div style={{ width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%', animation: 'pulse-gold 1.5s infinite' }}></div>
+                                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                            Aguardando pagamento...
+                                        </span>
+                                    </div>
                                 </div>
                             </>
                         ) : (
-                            <div style={{ padding: '20px' }}>
-                                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>✅</div>
-                                <h3 style={{ color: '#2ecc71', marginBottom: '10px' }}>Pagamento Confirmado!</h3>
-                                <p style={{ marginBottom: '25px' }}>
-                                    Recebemos seu pagamento com sucesso. Sua reserva está garantida!
+                            <div className="animate-scale">
+                                <div style={{ fontSize: '5rem', marginBottom: '24px' }}>🏆</div>
+                                <h3 style={{ color: '#25d366', marginBottom: '12px', fontSize: '1.8rem', fontFamily: 'Playfair Display' }}>Confirmado!</h3>
+                                <p style={{ marginBottom: '32px', fontSize: '1.1rem', lineHeight: 1.5 }}>
+                                    Recebemos seu PIX com sucesso.<br />
+                                    <strong>Sua feijoada está garantida!</strong>
                                 </p>
                                 <button
                                     onClick={() => {
                                         setShowModal(false);
                                         window.location.reload();
                                     }}
+                                    className="btn-primary"
                                     style={{
-                                        padding: '12px 30px',
-                                        background: '#2ecc71',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer'
+                                        padding: '16px 40px',
+                                        background: '#25d366',
+                                        color: 'black'
                                     }}
                                 >
                                     Concluir
@@ -323,9 +331,10 @@ export default function ReservationForm() {
                                     background: 'transparent',
                                     border: 'none',
                                     color: 'var(--text-muted)',
-                                    marginTop: '20px',
+                                    marginTop: '30px',
                                     cursor: 'pointer',
-                                    fontSize: '0.8rem'
+                                    fontSize: '0.85rem',
+                                    textDecoration: 'underline'
                                 }}
                             >
                                 Fechar e pagar depois
@@ -334,6 +343,15 @@ export default function ReservationForm() {
                     </div>
                 </div>
             )}
+
+            {/* Toasts */}
+            <div className="toast-container">
+                {toasts.map(t => (
+                    <div key={t.id} className={`toast toast-${t.type}${t.exiting ? ' exit' : ''}`}>
+                        {t.text}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

@@ -19,12 +19,23 @@
   margin: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--text);
   font-family: 'Outfit', sans-serif;
   line-height: 1.6;
   overflow-x: hidden;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(212, 160, 23, 0.15) !important;
 }
 
 h1,
