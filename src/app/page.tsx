@@ -26,20 +26,20 @@ export default function Home() {
 
       {/* Info Cards */}
       <section id="info" className="section-pad" style={{ textAlign: 'center' }}>
-        <div className="glass-card animate-fade" style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
+        <div className="glass-card animate-fade stagger" style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-            <div style={{ padding: '16px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📅</div>
+            <div className="info-card">
+              <span className="emoji">📅</span>
               <h3 style={{ fontSize: '1rem' }}>Domingo, 08/03</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>A partir das 11h</p>
             </div>
-            <div style={{ padding: '16px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🏷️</div>
+            <div className="info-card">
+              <span className="emoji">🏷️</span>
               <h3 style={{ fontSize: '1rem' }}>R$ 20,00</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Por marmita</p>
             </div>
-            <div style={{ padding: '16px' }}>
-              <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⛪</div>
+            <div className="info-card">
+              <span className="emoji">⛪</span>
               <h3 style={{ fontSize: '1rem' }}>Retirada na Igreja</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Local de entrega</p>
             </div>
