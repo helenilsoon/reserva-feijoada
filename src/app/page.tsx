@@ -27,7 +27,7 @@ export default function Home() {
       {/* Info Cards */}
       <section id="info" className="section-pad" style={{ textAlign: 'center' }}>
         <div className="glass-card animate-fade" style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
             <div style={{ padding: '16px' }}>
               <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📅</div>
               <h3 style={{ fontSize: '1rem' }}>Domingo, 08/03</h3>
