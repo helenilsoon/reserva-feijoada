@@ -133,116 +133,121 @@ export default function AdminPage() {
 
                     {loading ? (
                         <p style={{ textAlign: 'center', padding: '40px' }}>Carregando pedidos...</p>
+                    ) : reservations.length === 0 ? (
+                        <p style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Nenhum pedido encontrado.</p>
                     ) : (
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '720px' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '2px solid var(--glass-border)', color: 'var(--primary)' }}>
-                                        <th style={{ padding: '15px' }}>ID</th>
-                                        <th style={{ padding: '15px' }}>Data/Hora</th>
-                                        <th style={{ padding: '15px' }}>Cliente</th>
-                                        <th style={{ padding: '15px' }}>Marmitas</th>
-                                        <th style={{ padding: '15px' }}>Status Pagam.</th>
-                                        <th style={{ padding: '15px' }}>Retirada</th>
-                                        <th style={{ padding: '15px' }}>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {reservations.map((res) => (
-                                        <tr key={res.id} style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.3s' }}>
-                                            <td style={{ padding: '15px', color: 'var(--primary)', fontWeight: 'bold' }}>
-                                                #{res.id}
-                                            </td>
-                                            <td style={{ padding: '15px', fontSize: '0.85rem' }}>
-                                                {new Date(res.created_at).toLocaleString('pt-BR')}
-                                            </td>
-                                            <td style={{ padding: '15px' }}>
-                                                <div style={{ fontWeight: 'bold' }}>{res.customer_name}</div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>{res.phone}</div>
-                                            </td>
-                                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                                                <span style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '4px' }}>
-                                                    {res.guests}
-                                                </span>
-                                            </td>
-                                            <td style={{ padding: '15px' }}>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                                    <button
-                                                        onClick={() => togglePaymentStatus(res.id, res.payment_status)}
-                                                        style={{
-                                                            padding: '6px 12px',
-                                                            borderRadius: '6px',
-                                                            fontSize: '0.7rem',
-                                                            background: res.payment_status === 'Pago' ? 'rgba(37, 211, 102, 0.2)' : 'rgba(212, 160, 23, 0.2)',
-                                                            color: res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)',
-                                                            border: `1px solid ${res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)'}`,
-                                                            cursor: 'pointer'
-                                                        }}
-                                                    >
-                                                        {res.payment_status === 'Pago' ? 'PAGO (Clique p/ Pendente)' : 'PENDENTE (Clique p/ Confirmar)'}
-                                                    </button>
-
-                                                    {res.payment_status !== 'Pago' && (
-                                                        <button
-                                                            onClick={() => generatePixForAdmin(res)}
-                                                            style={{
-                                                                background: 'transparent',
-                                                                border: 'none',
-                                                                color: 'var(--text-muted)',
-                                                                fontSize: '0.65rem',
-                                                                textDecoration: 'underline',
-                                                                cursor: 'pointer'
-                                                            }}
-                                                        >
-                                                            Gerar Novo PIX
+                        <>
+                            {/* ── DESKTOP TABLE ── */}
+                            <div className="admin-table-desktop" style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '720px' }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: '2px solid var(--glass-border)', color: 'var(--primary)' }}>
+                                            <th style={{ padding: '15px' }}>ID</th>
+                                            <th style={{ padding: '15px' }}>Data/Hora</th>
+                                            <th style={{ padding: '15px' }}>Cliente</th>
+                                            <th style={{ padding: '15px' }}>Marmitas</th>
+                                            <th style={{ padding: '15px' }}>Status Pagam.</th>
+                                            <th style={{ padding: '15px' }}>Retirada</th>
+                                            <th style={{ padding: '15px' }}>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {reservations.map((res) => (
+                                            <tr key={res.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                                <td style={{ padding: '15px', color: 'var(--primary)', fontWeight: 'bold' }}>#{res.id}</td>
+                                                <td style={{ padding: '15px', fontSize: '0.85rem' }}>{new Date(res.created_at).toLocaleString('pt-BR')}</td>
+                                                <td style={{ padding: '15px' }}>
+                                                    <div style={{ fontWeight: 'bold' }}>{res.customer_name}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>{res.phone}</div>
+                                                </td>
+                                                <td style={{ padding: '15px', textAlign: 'center' }}>
+                                                    <span style={{ background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: '4px' }}>{res.guests}</span>
+                                                </td>
+                                                <td style={{ padding: '15px' }}>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                                        <button onClick={() => togglePaymentStatus(res.id, res.payment_status)} style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.7rem', background: res.payment_status === 'Pago' ? 'rgba(37,211,102,0.2)' : 'rgba(212,160,23,0.2)', color: res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)', border: `1px solid ${res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)'}`, cursor: 'pointer' }}>
+                                                            {res.payment_status === 'Pago' ? 'PAGO ✓' : 'PENDENTE'}
                                                         </button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td style={{ padding: '15px' }}>
+                                                        {res.payment_status !== 'Pago' && (
+                                                            <button onClick={() => generatePixForAdmin(res)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.65rem', textDecoration: 'underline', cursor: 'pointer' }}>Gerar PIX</button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td style={{ padding: '15px' }}>
+                                                    <button onClick={() => togglePickupStatus(res.id, res.pickup_status)} style={{ padding: '6px 16px', borderRadius: '20px', fontSize: '0.75rem', background: res.pickup_status === 'Retirado' ? 'rgba(0,123,255,0.2)' : 'rgba(255,255,255,0.05)', color: res.pickup_status === 'Retirado' ? '#007bff' : 'var(--text-muted)', border: `1px solid ${res.pickup_status === 'Retirado' ? '#007bff' : 'var(--glass-border)'}`, cursor: 'pointer' }}>
+                                                        {res.pickup_status === 'Retirado' ? 'Retirado' : 'A Retirar'}
+                                                    </button>
+                                                </td>
+                                                <td style={{ padding: '15px' }}>
+                                                    <button onClick={() => deleteReservation(res.id)} style={{ background: 'rgba(231,76,60,0.1)', color: '#e74c3c', border: '1px solid #e74c3c', padding: '6px 10px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}>Excluir</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* ── MOBILE CARDS ── */}
+                            <div className="admin-cards-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                {reservations.map((res) => (
+                                    <div key={res.id} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                        {/* Card Header */}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '1rem' }}>#{res.id} — {res.customer_name}</span>
+                                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>🍽️ {res.guests} marmita{res.guests !== 1 ? 's' : ''}</span>
+                                        </div>
+
+                                        {/* Info Row */}
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                                            <span>📞 {res.phone}</span>
+                                            <span>🕐 {new Date(res.created_at).toLocaleString('pt-BR')}</span>
+                                        </div>
+
+                                        {/* Action Buttons */}
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                            <button
+                                                onClick={() => togglePaymentStatus(res.id, res.payment_status)}
+                                                style={{ padding: '10px 8px', borderRadius: '10px', fontSize: '0.78rem', fontWeight: 600, background: res.payment_status === 'Pago' ? 'rgba(37,211,102,0.15)' : 'rgba(212,160,23,0.15)', color: res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)', border: `1px solid ${res.payment_status === 'Pago' ? '#25d366' : 'var(--primary)'}`, cursor: 'pointer' }}
+                                            >
+                                                {res.payment_status === 'Pago' ? '✅ Pago' : '⏳ Pendente'}
+                                            </button>
+
+                                            <button
+                                                onClick={() => togglePickupStatus(res.id, res.pickup_status)}
+                                                style={{ padding: '10px 8px', borderRadius: '10px', fontSize: '0.78rem', fontWeight: 600, background: res.pickup_status === 'Retirado' ? 'rgba(0,123,255,0.15)' : 'rgba(255,255,255,0.05)', color: res.pickup_status === 'Retirado' ? '#007bff' : 'var(--text-muted)', border: `1px solid ${res.pickup_status === 'Retirado' ? '#007bff' : 'var(--glass-border)'}`, cursor: 'pointer' }}
+                                            >
+                                                {res.pickup_status === 'Retirado' ? '📦 Retirado' : '🔄 A Retirar'}
+                                            </button>
+
+                                            {res.payment_status !== 'Pago' && (
                                                 <button
-                                                    onClick={() => togglePickupStatus(res.id, res.pickup_status)}
-                                                    style={{
-                                                        padding: '6px 16px',
-                                                        borderRadius: '20px',
-                                                        fontSize: '0.75rem',
-                                                        background: res.pickup_status === 'Retirado' ? 'rgba(0, 123, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                                                        color: res.pickup_status === 'Retirado' ? '#007bff' : 'var(--text-muted)',
-                                                        border: `1px solid ${res.pickup_status === 'Retirado' ? '#007bff' : 'var(--glass-border)'}`,
-                                                        cursor: 'pointer'
-                                                    }}
+                                                    onClick={() => generatePixForAdmin(res)}
+                                                    style={{ padding: '10px', borderRadius: '10px', fontSize: '0.78rem', fontWeight: 600, background: 'rgba(212,160,23,0.1)', color: 'var(--primary)', border: '1px solid var(--primary)', cursor: 'pointer' }}
                                                 >
-                                                    {res.pickup_status === 'Retirado' ? 'Retirado' : 'A Retirar'}
+                                                    📲 Gerar PIX
                                                 </button>
-                                            </td>
-                                            <td style={{ padding: '15px' }}>
-                                                <button
-                                                    onClick={() => deleteReservation(res.id)}
-                                                    style={{
-                                                        background: 'rgba(231, 76, 60, 0.1)',
-                                                        color: '#e74c3c',
-                                                        border: '1px solid #e74c3c',
-                                                        padding: '6px 10px',
-                                                        borderRadius: '6px',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.75rem'
-                                                    }}
-                                                >
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {reservations.length === 0 && (
-                                        <tr>
-                                            <td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                                                Nenhum pedido encontrado.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                            )}
+
+                                            <button
+                                                onClick={() => deleteReservation(res.id)}
+                                                style={{ padding: '10px', borderRadius: '10px', fontSize: '0.78rem', fontWeight: 600, background: 'rgba(231,76,60,0.1)', color: '#e74c3c', border: '1px solid #e74c3c', cursor: 'pointer', gridColumn: res.payment_status !== 'Pago' ? 'auto' : 'span 2' }}
+                                            >
+                                                🗑️ Excluir
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <style>{`
+                                .admin-table-desktop { display: block; }
+                                .admin-cards-mobile  { display: none; }
+                                @media (max-width: 768px) {
+                                    .admin-table-desktop { display: none; }
+                                    .admin-cards-mobile  { display: flex; }
+                                }
+                            `}</style>
+                        </>
                     )}
                 </div>
             </section>
