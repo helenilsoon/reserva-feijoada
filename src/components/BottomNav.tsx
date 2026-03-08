@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Home, Calendar, Info, MessageCircle, Package } from "lucide-react";
+import { Home, Calendar, Info, MessageCircle, Package,CreditCard } from "lucide-react";
 
 export default function BottomNav() {
     const pathname = usePathname();
@@ -12,7 +12,7 @@ export default function BottomNav() {
         { id: "reservar", label: "Reservar", icon: Calendar, href: "/reservar" },
         { id: "pedidos", label: "Pedidos", icon: Package, href: "/reservas" },
         { id: "info", label: "Cardápio", icon: Info, href: "/menu" },
-        { id: "contato", label: "WhatsApp", icon: MessageCircle, href: "https://wa.me/5592993914928" },
+        { id: "contato", label: "Maquininha", icon: CreditCard, href: "/maquininha" },
     ];
 
     const handleHaptic = () => {
