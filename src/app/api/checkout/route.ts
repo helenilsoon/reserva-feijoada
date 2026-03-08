@@ -3,10 +3,10 @@ import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 export async function POST(req: Request) {
     try {
-        const { reservationId, guests, name } = await req.json();
+        const { reservationId, guests, name, amount } = await req.json();
 
-        if (!reservationId) {
-            return NextResponse.json({ error: 'ID da reserva é obrigatório.' }, { status: 400 });
+        if (!reservationId && !amount) {
+            return NextResponse.json({ error: 'ID da reserva ou valor manual é obrigatório.' }, { status: 400 });
         }
 
         const token = process.env.MP_ACCESS_TOKEN;
@@ -21,15 +21,15 @@ export async function POST(req: Request) {
         const payment = new Payment(client);
 
         const pricePerUnit = 20.00;
-        const totalAmount = pricePerUnit * (guests || 1);
+        const totalAmount = amount || (pricePerUnit * (guests || 1));
 
         const response = await payment.create({
             body: {
                 transaction_amount: totalAmount,
-                description: `Feijoada Solidária - ${guests} porções`,
+                description: amount ? `Pagamento Avulso - R$ ${amount.toFixed(2)}` : `Feijoada Solidária - ${guests} porções`,
                 payment_method_id: 'pix',
                 notification_url: `${process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL || 'https://example.com'}/api/webhooks/mercadopago`,
-                external_reference: reservationId.toString(),
+                external_reference: reservationId ? reservationId.toString() : `manual_${Date.now()}`,
                 payer: {
                     email: 'pagador@feijoada.com',
                     first_name: name || 'Cliente',

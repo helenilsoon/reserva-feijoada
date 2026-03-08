@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/Header';
+import Link from 'next/link';
 import { Search, Trash2, QrCode, Edit, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReservationForm from '@/components/ReservationForm';
@@ -184,6 +185,23 @@ export default function AdminPage() {
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>A Receber (Pendente)</p>
                             <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', opacity: 0.8, margin: 0 }}>R$ {pendingRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
                         </div>
+                        <Link href="/maquininha" style={{
+                            background: 'rgba(212,160,23,0.1)',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: '1px solid var(--primary)',
+                            textAlign: 'center',
+                            textDecoration: 'none',
+                            transition: 'all 0.2s ease',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '4px'
+                        }} className="tap-feedback">
+                            <QrCode size={24} color="var(--primary)" />
+                            <span style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '0.9rem' }}>Venda Rápida (Maquininha)</span>
+                        </Link>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px', flexWrap: 'wrap', gap: '20px' }}>
@@ -233,7 +251,7 @@ export default function AdminPage() {
                     ) : (
                         <>
                             {/* ── DESKTOP TABLE ── */}
-                            <div className="table-container" style={{ overflowX: 'auto', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
+                            <div className="table-container admin-table-desktop" style={{ overflowX: 'auto', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1px solid var(--glass-border)' }}>
                                 <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '900px' }}>
                                     <thead>
                                         <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.02)' }}>
