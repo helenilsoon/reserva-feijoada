@@ -43,7 +43,7 @@ export default function AdminPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingReservation, setEditingReservation] = useState<Reservation | null>(null);
 
-    const MARMITA_PRICE = 35.00;
+    const MARMITA_PRICE = 20.00;
 
     // ── Toasts ──────────────────────────────────────────
     const showToast = useCallback((type: Toast['type'], text: string) => {

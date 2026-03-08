@@ -26,7 +26,7 @@ export default function ReservationForm({
     const [loading, setLoading] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
 
-    const MARMITA_PRICE = 35.00;
+    const MARMITA_PRICE = 20.00;
     const totalPrice = formData.guests * MARMITA_PRICE;
 
     // Format phone as (XX) XXXXX-XXXX
