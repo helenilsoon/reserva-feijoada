@@ -8,8 +8,10 @@ export async function POST(req: Request) {
         console.log('Webhook Mercado Pago Recebido:', JSON.stringify(body));
 
         // Estamos interessados em notificações de "payment"
+        // Estamos interessados em notificações de "payment"
         if (body.type === 'payment' && body.data?.id) {
             const paymentId = body.data.id;
+            console.log(`[Webhook] Processando pagamento ID: ${paymentId}`);
             const token = process.env.MP_ACCESS_TOKEN;
 
             if (!token) {
@@ -30,23 +32,28 @@ export async function POST(req: Request) {
                 if (status === 'approved' && reservationId) {
                     // Verifica se é um pagamento manual ou uma reserva
                     if (reservationId.startsWith('manual_')) {
-                        console.log(`Pagamento manual ${reservationId} aprovado. Nenhuma atualização de reserva necessária.`);
+                        console.log(`[Webhook] Pagamento manual ${reservationId} aprovado. Nenhuma atualização de reserva necessária.`);
                     } else {
+                        // Converte para número para garantir compatibilidade com o tipo 'integer' do banco de dados id
+                        const resIdFormatted = parseInt(reservationId);
+
+                        console.log(`[Webhook] Tentando atualizar reserva ID: ${resIdFormatted}`);
+
                         const result = await sql`
                             UPDATE reservations 
                             SET payment_status = 'Pago' 
-                            WHERE id = ${reservationId}
+                            WHERE id = ${resIdFormatted}
                             RETURNING id
                         `;
 
                         if (result && result.length > 0) {
-                            console.log(`Reserva ${reservationId} marcada como PAGA.`);
+                            console.log(`[Webhook] Sucesso: Reserva ${resIdFormatted} marcada como PAGA.`);
                         } else {
-                            console.warn(`Reserva ${reservationId} não encontrada para o pagamento ${paymentId}.`);
+                            console.warn(`[Webhook] Aviso: Reserva ${resIdFormatted} não encontrada no banco de dados.`);
                         }
                     }
                 } else {
-                    console.log(`Pagamento ${paymentId} está com status ${status}. Nenhuma ação tomada.`);
+                    console.log(`[Webhook] Pagamento ${paymentId} recebido com status: ${status}. Nenhuma ação tomada.`);
                 }
             } catch (sdkError) {
                 console.error(`Erro ao buscar pagamento ${paymentId} no Mercado Pago:`, sdkError);

@@ -23,12 +23,21 @@ export async function POST(req: Request) {
         const pricePerUnit = 20.00;
         const totalAmount = amount || (pricePerUnit * (guests || 1));
 
+        const webhookUrl = process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL;
+
+        if (!webhookUrl) {
+            console.warn('AVISO: WEBHOOK_URL ou NEXT_PUBLIC_URL não configurados. Webhook pode não funcionar.');
+        }
+
+        const notificationUrl = `${webhookUrl || 'https://example.com'}/api/webhooks/mercadopago`;
+        console.log(`[Checkout] URL de notificação configurada: ${notificationUrl}`);
+
         const response = await payment.create({
             body: {
                 transaction_amount: totalAmount,
                 description: amount ? `Pagamento Avulso - R$ ${amount.toFixed(2)}` : `Feijoada Solidária - ${guests} porções`,
                 payment_method_id: 'pix',
-                notification_url: `${process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL || 'https://example.com'}/api/webhooks/mercadopago`,
+                notification_url: notificationUrl,
                 external_reference: reservationId ? reservationId.toString() : `manual_${Date.now()}`,
                 payer: {
                     email: 'pagador@feijoada.com',
