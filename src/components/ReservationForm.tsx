@@ -168,16 +168,16 @@ export default function ReservationForm({
                 {/* Event Info Header */}
                 <div className="animate-glow" style={{
                     textAlign: 'center',
-                    padding: '24px',
+                    padding: '24px 16px',
                     background: 'rgba(212, 160, 23, 0.08)',
                     borderRadius: '20px',
                     marginBottom: '10px',
                     border: '1px solid rgba(212, 160, 23, 0.4)',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
                 }}>
-                    <h3 style={{ color: 'var(--primary)', marginBottom: '8px', fontSize: '1.4rem' }}>{reservation ? 'Editar Reserva' : 'Feijoada Solidária'}</h3>
-                    <p style={{ fontWeight: '700', fontSize: '1.15rem', color: 'white' }}>📅 Domingo, 08/03 às 11:00</p>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '4px' }}>Local: Retirada na Igreja</p>
+                    <h3 className="title-md" style={{ color: 'var(--primary)', marginBottom: '8px' }}>{reservation ? 'Editar Reserva' : 'Feijoada Solidária'}</h3>
+                    <p style={{ fontWeight: '700', fontSize: '1.1rem', color: 'white' }}>📅 Domingo, 08/03 às 11:00</p>
+                    <p className="text-sm" style={{ color: 'var(--text-muted)', marginTop: '4px' }}>Local: Retirada na Igreja</p>
                 </div>
 
                 <div className="input-group">
@@ -206,7 +206,8 @@ export default function ReservationForm({
                                 width: '100%', padding: '14px',
                                 background: 'rgba(255,255,255,0.05)',
                                 border: `1px solid ${formData.phone.length > 0 ? (isPhoneValid(formData.phone) ? '#25d366' : '#e74c3c') : 'var(--glass-border)'}`,
-                                borderRadius: '12px', color: 'white'
+                                borderRadius: '12px', color: 'white',
+                                fontSize: '16px'
                             }}
                         />
                         {formData.phone.length > 0 && !isPhoneValid(formData.phone) && (
@@ -224,7 +225,7 @@ export default function ReservationForm({
                             required
                             value={formData.guests}
                             onChange={(e) => setFormData({ ...formData, guests: parseInt(e.target.value) || 1 })}
-                            style={{ width: '100%', padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'white' }}
+                            style={{ width: '100%', padding: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '12px', color: 'white', fontSize: '16px' }}
                         />
                     </div>
                 </div>
@@ -299,24 +300,26 @@ export default function ReservationForm({
                     <div className="glass-card animate-bounce" style={{
                         maxWidth: '420px',
                         width: '100%',
-                        padding: '40px 30px',
+                        maxHeight: '90vh',
+                        overflowY: 'auto',
+                        padding: '32px 24px',
                         textAlign: 'center',
                         border: paymentConfirmed ? '2px solid #25d366' : '1px solid var(--glass-border)',
-                        boxShadow: '0 20px 60px rgba(0,0,0,0.8)'
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.8)',
                     }}>
                         {!paymentConfirmed ? (
                             <>
-                                <h3 style={{ color: 'var(--primary)', marginBottom: '15px', fontSize: '1.5rem', fontFamily: 'Playfair Display' }}>Pagamento PIX</h3>
-                                <p style={{ fontSize: '0.95rem', marginBottom: '25px', color: 'var(--text-muted)' }}>
+                                <h3 className="title-md" style={{ color: 'var(--primary)', marginBottom: '10px', fontFamily: 'Playfair Display' }}>Pagamento PIX</h3>
+                                <p className="text-sm" style={{ marginBottom: '20px', color: 'var(--text-muted)' }}>
                                     Escaneie o QR Code abaixo ou copie a chave PIX para finalizar sua reserva.
                                 </p>
 
                                 {pixData ? (
-                                    <div style={{ background: 'white', padding: '20px', borderRadius: '24px', display: 'inline-block', marginBottom: '25px', boxShadow: '0 0 40px rgba(212, 160, 23, 0.2)' }}>
+                                    <div style={{ background: 'white', padding: '16px', borderRadius: '24px', display: 'inline-block', marginBottom: '20px', boxShadow: '0 0 40px rgba(212, 160, 23, 0.2)' }}>
                                         <img
                                             src={`data:image/png;base64,${pixData.qr_code_base64}`}
                                             alt="QR Code PIX"
-                                            style={{ width: '220px', height: '220px' }}
+                                            style={{ width: '180px', height: '180px' }}
                                         />
                                     </div>
                                 ) : (

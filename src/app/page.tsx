@@ -14,9 +14,9 @@ export default function Home() {
       <section className="hero" style={{ backgroundImage: 'url("/hero-bg.png")', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         <div className="hero-content animate-fade">
           <h1 className="brand" style={{ fontSize: '1rem', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '4px', color: 'var(--primary)' }}>Legendário</h1>
-          <h2 className="hero-title-main">FEIJOADA</h2>
-          <h2 className="hero-title-sub">Solidária</h2>
-          <p style={{ marginTop: '16px', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text)', letterSpacing: '2px' }}>
+          <h2 className="hero-title-main title-xl">FEIJOADA</h2>
+          <h2 className="hero-title-sub title-lg">Solidária</h2>
+          <p className="text-lg" style={{ marginTop: '16px', fontWeight: 'bold', color: 'var(--text)', letterSpacing: '2px' }}>
             RUMO AO LEGENDÁRIO!
           </p>
           <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '32px' }}>

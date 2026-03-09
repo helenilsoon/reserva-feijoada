@@ -145,9 +145,9 @@ export default function Header() {
             </nav>
 
             <style>{`
-                @media (max-width: 768px) {
+                @media (max-width: 640px) {
                     .desktop-nav { display: none !important; }
-                    .hamburger-btn { display: none !important; }
+                    .hamburger-btn { display: flex !important; }
                 }
             `}</style>
         </header>

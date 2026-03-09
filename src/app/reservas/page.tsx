@@ -167,23 +167,23 @@ export default function AdminPage() {
     return (
         <main>
             <Header />
-            <section style={{ padding: '100px 12px 60px', minHeight: '100vh', background: 'var(--background)' }}>
-                <div className="glass-card animate-fade" style={{ maxWidth: '1250px', margin: '0 auto', padding: '24px 16px' }}>
+            <section className="section-pad" style={{ paddingBottom: '60px', minHeight: '100vh', background: 'var(--background)' }}>
+                <div className="glass-card animate-fade" style={{ maxWidth: '1250px', margin: '0 auto' }}>
 
                     {/* Estatísticas */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>Total de Pedidos</p>
-                            <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: 0 }}>{reservations.length}</h2>
-                            <p style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '4px' }}>{reservations.reduce((acc, r) => acc + r.guests, 0)} marmitas</p>
+                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Total de Pedidos</p>
+                            <h2 className="title-md" style={{ color: 'var(--primary)', margin: 0 }}>{reservations.length}</h2>
+                            <p style={{ fontSize: '0.7rem', opacity: 0.6, marginTop: '2px' }}>{reservations.reduce((acc, r) => acc + r.guests, 0)} marmitas</p>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>Arrecadação (Paga)</p>
-                            <h2 style={{ fontSize: '1.8rem', color: '#25d366', margin: 0 }}>R$ {totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
+                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>Arrecadação (Paga)</p>
+                            <h2 className="title-md" style={{ color: '#25d366', margin: 0 }}>R$ {totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
                         </div>
-                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '8px' }}>A Receber (Pendente)</p>
-                            <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', opacity: 0.8, margin: 0 }}>R$ {pendingRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
+                        <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '16px', border: '1px solid var(--glass-border)', textAlign: 'center' }}>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>A Receber (Pendente)</p>
+                            <h2 className="title-md" style={{ color: 'var(--primary)', opacity: 0.8, margin: 0 }}>R$ {pendingRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h2>
                         </div>
                         <Link href="/maquininha" style={{
                             background: 'rgba(212,160,23,0.1)',
@@ -206,12 +206,12 @@ export default function AdminPage() {
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px', flexWrap: 'wrap', gap: '20px' }}>
                         <div>
-                            <h1 className="brand animate-glow" style={{ fontSize: '2rem', margin: 0, color: 'var(--primary)' }}>Pedidos Recebidos</h1>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>Gerenciamento de reservas e pagamentos</p>
+                            <h1 className="brand title-md animate-glow" style={{ margin: 0, color: 'var(--primary)' }}>Pedidos Recebidos</h1>
+                            <p className="text-sm" style={{ color: 'var(--text-muted)', marginTop: '4px' }}>Gerenciamento de reservas e pagamentos</p>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <div style={{ position: 'relative' }}>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', width: '100%', maxWidth: '400px' }}>
+                            <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
                                 <input
                                     type="text"
                                     placeholder="Buscar por nome, celular ou ID..."
@@ -224,7 +224,7 @@ export default function AdminPage() {
                                         borderRadius: '12px',
                                         color: 'white',
                                         fontSize: '0.9rem',
-                                        width: '280px'
+                                        width: '100%'
                                     }}
                                 />
                                 <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
@@ -424,13 +424,13 @@ export default function AdminPage() {
             {/* ── PIX MODAL ── */}
             {showPixModal && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-                    <div className="glass-card animate-bounce" style={{ maxWidth: '420px', width: '100%', padding: '40px 30px', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.8)' }}>
-                        <h3 style={{ color: 'var(--primary)', marginBottom: '20px', fontSize: '1.6rem', fontFamily: 'Playfair Display' }}>QR Code PIX</h3>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '0.9rem' }}>Pedido #{activeResId} — {reservations.find(r => r.id === activeResId)?.customer_name}</p>
+                    <div className="glass-card animate-bounce" style={{ maxWidth: '420px', width: '100%', padding: '32px 24px', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.8)', maxHeight: '90vh', overflowY: 'auto' }}>
+                        <h3 className="title-md" style={{ color: 'var(--primary)', marginBottom: '15px', fontFamily: 'Playfair Display' }}>QR Code PIX</h3>
+                        <p className="text-sm" style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>Pedido #{activeResId} — {reservations.find(r => r.id === activeResId)?.customer_name}</p>
 
                         {pixData && (
-                            <div style={{ background: 'white', padding: '20px', borderRadius: '24px', display: 'inline-block', marginBottom: '30px', boxShadow: '0 0 30px rgba(212, 160, 23, 0.2)' }}>
-                                <img src={`data:image/png;base64,${pixData.qr_code_base64}`} alt="QR Code PIX" style={{ width: '220px', height: '220px' }} />
+                            <div style={{ background: 'white', padding: '16px', borderRadius: '24px', display: 'inline-block', marginBottom: '20px', boxShadow: '0 0 30px rgba(212, 160, 23, 0.2)' }}>
+                                <img src={`data:image/png;base64,${pixData.qr_code_base64}`} alt="QR Code PIX" style={{ width: '180px', height: '180px' }} />
                             </div>
                         )}
 

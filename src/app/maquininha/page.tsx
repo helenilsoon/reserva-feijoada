@@ -60,11 +60,11 @@ export default function MaquininhaPage() {
                                 className="glass-card"
                                 style={{ padding: '40px 30px', textAlign: 'center' }}
                             >
-                                <div style={{ background: 'rgba(212, 160, 23, 0.1)', width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: 'var(--primary)' }}>
-                                    <CreditCard size={32} />
+                                <div style={{ background: 'rgba(212, 160, 23, 0.1)', width: '56px', height: '56px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'var(--primary)' }}>
+                                    <CreditCard size={28} />
                                 </div>
-                                <h1 style={{ fontSize: '1.8rem', marginBottom: '8px', color: 'white' }}>Maquininha</h1>
-                                <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '0.9rem' }}>Digite o valor para gerar o QR Code</p>
+                                <h1 className="title-md" style={{ color: 'white', marginBottom: '8px' }}>Maquininha</h1>
+                                <p className="text-sm" style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>Digite o valor para gerar o QR Code</p>
 
                                 <div style={{ position: 'relative', marginBottom: '32px' }}>
                                     <span style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>R$</span>
@@ -112,13 +112,13 @@ export default function MaquininhaPage() {
                                     <ChevronLeft size={16} /> Voltar
                                 </button>
 
-                                <h2 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '24px', paddingTop: '10px' }}>QR Code Gerado</h2>
+                                <h2 className="title-md" style={{ color: 'var(--primary)', marginBottom: '20px', paddingTop: '10px' }}>QR Code</h2>
 
-                                <div style={{ background: 'white', padding: '16px', borderRadius: '24px', display: 'inline-block', marginBottom: '24px', boxShadow: '0 0 40px rgba(212, 160, 23, 0.2)' }}>
+                                <div style={{ background: 'white', padding: '12px', borderRadius: '24px', display: 'inline-block', marginBottom: '20px', boxShadow: '0 0 40px rgba(212, 160, 23, 0.2)' }}>
                                     <img
                                         src={`data:image/png;base64,${pixData.qr_code_base64}`}
                                         alt="QR Code PIX"
-                                        style={{ width: '220px', height: '220px' }}
+                                        style={{ width: '180px', height: '180px' }}
                                     />
                                 </div>
 

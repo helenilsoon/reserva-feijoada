@@ -17,8 +17,8 @@ export default function ReservarPage() {
                 style={{ paddingTop: '100px' }}
             >
                 <div style={{ maxWidth: '560px', margin: '0 auto', textAlign: 'center', padding: '0 16px' }}>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '12px', fontFamily: 'Playfair Display, serif' }}>Fazer Reserva</h2>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '1rem' }}>
+                    <h2 className="title-md" style={{ marginBottom: '12px', fontFamily: 'Playfair Display, serif' }}>Fazer Reserva</h2>
+                    <p className="text-md" style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>
                         Garanta já sua marmita para o evento! O pagamento pode ser feito via PIX.
                     </p>
                     <div className="glass-card" style={{ padding: '28px 24px', textAlign: 'left' }}>

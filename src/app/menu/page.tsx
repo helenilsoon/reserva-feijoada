@@ -17,8 +17,8 @@ export default function MenuPage() {
                 style={{ textAlign: 'center', paddingTop: '100px' }}
             >
                 <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', padding: '0 16px', marginBottom: '40px' }}>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '12px', fontFamily: 'Playfair Display, serif' }}>Nosso Cardápio</h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
+                    <h2 className="title-md" style={{ marginBottom: '12px', fontFamily: 'Playfair Display, serif' }}>Nosso Cardápio</h2>
+                    <p className="text-md" style={{ color: 'var(--text-muted)' }}>
                         Tradição e sabor em cada detalhe.
                     </p>
                 </div>
