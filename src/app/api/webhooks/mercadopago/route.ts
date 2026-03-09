@@ -1,40 +1,62 @@
 import { sql } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { MercadoPagoConfig, Payment } from 'mercadopago';
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        console.log('Mercado Pago Webhook:', body);
+        console.log('Webhook Mercado Pago Recebido:', JSON.stringify(body));
 
-        // Mercado Pago sends different types of notifications
-        // We are interested in "payment" notifications
-        // we are interested in successful payments
+        // Estamos interessados em notificações de "payment"
         if (body.type === 'payment' && body.data?.id) {
             const paymentId = body.data.id;
+            const token = process.env.MP_ACCESS_TOKEN;
 
-            // In a production environment, you would use the Mercado Pago SDK here
-            // to fetch the payment details and verify the status before updating:
-            // const payment = new Payment(client);
-            // const details = await payment.get({ id: paymentId });
-            // const reservationId = details.external_reference;
-            // if (details.status === 'approved') { ... }
+            if (!token) {
+                console.error('Erro no Webhook: MP_ACCESS_TOKEN não configurado');
+                return NextResponse.json({ error: 'Erro de configuração do servidor' }, { status: 500 });
+            }
 
-            // For now, if we receive a notification for an action that implies payment success,
-            // or if we simply want to simulate the flow for the user's local tests:
-            if (body.action === 'payment.created' || body.action === 'payment.updated') {
-                // In a real webhook, the external_reference is usually available in the payment details
-                // If the user is testing with a manual tool that sends the external_reference in the body:
-                const reservationId = body.data.external_reference;
-                if (reservationId) {
-                    await sql`UPDATE reservations SET payment_status = 'Pago' WHERE id = ${reservationId}`;
-                    console.log(`Reservation ${reservationId} marked as PAID via webhook.`);
+            const client = new MercadoPagoConfig({ accessToken: token });
+            const payment = new Payment(client);
+
+            try {
+                const details = await payment.get({ id: paymentId });
+                const status = details.status;
+                const reservationId = details.external_reference;
+
+                console.log(`Detalhes do Pagamento: ID=${paymentId}, Status=${status}, RefExterna=${reservationId}`);
+
+                if (status === 'approved' && reservationId) {
+                    // Verifica se é um pagamento manual ou uma reserva
+                    if (reservationId.startsWith('manual_')) {
+                        console.log(`Pagamento manual ${reservationId} aprovado. Nenhuma atualização de reserva necessária.`);
+                    } else {
+                        const result = await sql`
+                            UPDATE reservations 
+                            SET payment_status = 'Pago' 
+                            WHERE id = ${reservationId}
+                            RETURNING id
+                        `;
+
+                        if (result && result.length > 0) {
+                            console.log(`Reserva ${reservationId} marcada como PAGA.`);
+                        } else {
+                            console.warn(`Reserva ${reservationId} não encontrada para o pagamento ${paymentId}.`);
+                        }
+                    }
+                } else {
+                    console.log(`Pagamento ${paymentId} está com status ${status}. Nenhuma ação tomada.`);
                 }
+            } catch (sdkError) {
+                console.error(`Erro ao buscar pagamento ${paymentId} no Mercado Pago:`, sdkError);
             }
         }
 
+        // Sempre retorna 200 para confirmar recebimento
         return NextResponse.json({ received: true });
     } catch (error) {
-        console.error('Webhook error:', error);
-        return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
+        console.error('Erro capturado no manipulador de webhook:', error);
+        return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
     }
 }

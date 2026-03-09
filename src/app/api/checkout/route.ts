@@ -10,13 +10,13 @@ export async function POST(req: Request) {
         }
 
         const token = process.env.MP_ACCESS_TOKEN;
-        console.log('TOKEN DEBUG:', token ? `len=${token.length}, prefix=${token.substring(0, 8)}` : 'EMPTY/UNDEFINED');
+        console.log('DEBUG TOKEN:', token ? `tam=${token.length}, prefixo=${token.substring(0, 8)}` : 'VAZIO/INDEFINIDO');
 
         if (!token) {
             return NextResponse.json({ error: 'MP_ACCESS_TOKEN não configurado.' }, { status: 500 });
         }
 
-        // Create client INSIDE the function so env is always loaded
+        // Cria o cliente DENTRO da função para garantir que o env seja sempre carregado
         const client = new MercadoPagoConfig({ accessToken: token });
         const payment = new Payment(client);
 
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         });
     } catch (error: any) {
         const mpError = error?.cause ?? error?.message ?? String(error);
-        console.error('Mercado Pago PIX Error:', JSON.stringify(mpError));
+        console.error('Erro PIX Mercado Pago:', JSON.stringify(mpError));
 
         const errorMessage = Array.isArray(mpError)
             ? mpError.map((c: any) => c.description || c.code).join(', ')
