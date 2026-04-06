@@ -5,8 +5,8 @@ import BottomNav from "@/components/BottomNav";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Reserva de Feijoada | Sabor & Tradição",
-  description: "Reserve sua feijoada completa com o melhor sabor da região.",
+  title: "Legendário | Reserva de Feijoada",
+  description: "A melhor feijoada solidária da região. Reserve sua feijoada completa com o sabor e tradição do Legendário.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
