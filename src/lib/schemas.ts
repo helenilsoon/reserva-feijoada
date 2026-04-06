@@ -30,3 +30,13 @@ export const settingsSchema = z.object({
 export const loginSchema = z.object({
   password: z.string().min(1, 'Senha é obrigatória'),
 });
+
+export const menuItemSchema = z.object({
+  category: z.string().min(1, 'Categoria é obrigatória'),
+  title: z.string().min(1, 'Título é obrigatório'),
+  description: z.string().optional().nullable(),
+  items: z.array(z.string()).min(1, 'Pelo menos um item é necessário'),
+  price: z.number().min(0, 'O preço deve ser maior ou igual a zero').default(0),
+  active: z.boolean().default(true),
+  order_index: z.number().int().default(0),
+});

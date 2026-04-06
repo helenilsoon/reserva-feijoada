@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CreditCard, LogOut, Calendar, TrendingUp, Settings, Users } from "lucide-react";
+import { CreditCard, LogOut, Calendar, TrendingUp, Settings, Users, Utensils } from "lucide-react";
 import { motion } from "framer-motion";
 import AdminPageLayout from "@/components/admin/AdminPageLayout";
 import GlassPanel from "@/components/admin/GlassPanel";
@@ -64,6 +64,14 @@ export default function AdminDashboard() {
             href: "/admin/maquininha",
             color: "#25d366",
             rgb: "37, 211, 102",
+        },
+        {
+            title: "Cardápio",
+            description: "Editar itens, categorias e fotos do menu digital.",
+            icon: <Utensils size={32} />,
+            href: "/admin/menu",
+            color: "#ff9f43",
+            rgb: "255, 159, 67",
         },
         {
             title: "Configurações",

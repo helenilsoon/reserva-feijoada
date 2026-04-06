@@ -327,6 +327,7 @@ button {
   border-radius: 12px;
   font-weight: 600;
   border: none;
+  color: inherit;
 }
 
 @media (hover: hover) {

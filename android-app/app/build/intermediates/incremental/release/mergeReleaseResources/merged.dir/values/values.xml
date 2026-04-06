@@ -349,6 +349,12 @@
     <string name="orientation" translatable="false">default</string>
     <string name="providerAuthority" translatable="false">com.reservafeijoada.twa.fileprovider</string>
     <string name="search_menu_title">Search</string>
+    <string name="shortcut_name_0" translatable="false">Reservar Agora</string>
+    <string name="shortcut_name_1" translatable="false">Maquininha</string>
+    <string name="shortcut_name_2" translatable="false">Minhas Reservas</string>
+    <string name="shortcut_short_name_0" translatable="false">Reservar</string>
+    <string name="shortcut_short_name_1" translatable="false">Maquininha</string>
+    <string name="shortcut_short_name_2" translatable="false">Reservas</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <string name="update_chrome_toast">Please update to Chrome Stable 72 or later.</string>
     <string name="webManifestUrl" translatable="false">https://reserva-feijoada.vercel.app/manifest.json</string>

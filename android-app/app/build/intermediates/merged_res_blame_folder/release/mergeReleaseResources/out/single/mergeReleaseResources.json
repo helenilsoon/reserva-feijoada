@@ -4,6 +4,14 @@
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxhdpi/ic_notification_icon.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxhdpi_shortcut_1.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxhdpi/shortcut_1.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-hdpi_shortcut_0.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-hdpi/shortcut_0.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxxhdpi_splash.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxxhdpi/splash.png"
     },
@@ -24,12 +32,24 @@
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxhdpi/splash.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xhdpi_shortcut_2.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xhdpi/shortcut_2.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-hdpi_shortcut_2.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-hdpi/shortcut_2.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/xml_filepaths.xml.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/xml/filepaths.xml"
     },
     {
         "merged": "com.reservafeijoada.twa.app-release-25:/mipmap-xhdpi_ic_launcher.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-mdpi_shortcut_2.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-mdpi/shortcut_2.png"
     },
     {
         "merged": "com.reservafeijoada.twa.app-release-25:/mipmap-hdpi_ic_launcher.png.flat",
@@ -44,8 +64,16 @@
         "source": "com.reservafeijoada.twa.app-main-26:/xml/shortcuts.xml"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxxhdpi_shortcut_2.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxxhdpi/shortcut_2.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xhdpi_ic_notification_icon.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xhdpi/ic_notification_icon.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-mdpi_shortcut_0.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-mdpi/shortcut_0.png"
     },
     {
         "merged": "com.reservafeijoada.twa.app-release-25:/mipmap-xhdpi_ic_maskable.png.flat",
@@ -60,12 +88,24 @@
         "source": "com.reservafeijoada.twa.app-main-26:/mipmap-xxhdpi/ic_launcher.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-hdpi_shortcut_1.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-hdpi/shortcut_1.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/mipmap-xxxhdpi_ic_maskable.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/mipmap-xxxhdpi/ic_maskable.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxhdpi_shortcut_2.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxhdpi/shortcut_2.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-hdpi_ic_notification_icon.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-hdpi/ic_notification_icon.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xhdpi_shortcut_1.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xhdpi/shortcut_1.png"
     },
     {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-mdpi_ic_notification_icon.png.flat",
@@ -80,6 +120,10 @@
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xhdpi/splash.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxxhdpi_shortcut_0.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxxhdpi/shortcut_0.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxxhdpi_ic_notification_icon.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxxhdpi/ic_notification_icon.png"
     },
@@ -92,11 +136,27 @@
         "source": "com.reservafeijoada.twa.app-main-26:/mipmap-hdpi/ic_maskable.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-mdpi_shortcut_1.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-mdpi/shortcut_1.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/mipmap-mdpi_ic_launcher.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/mipmap-mdpi/ic_launcher.png"
     },
     {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxxhdpi_shortcut_1.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxxhdpi/shortcut_1.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xxhdpi_shortcut_0.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xxhdpi/shortcut_0.png"
+    },
+    {
         "merged": "com.reservafeijoada.twa.app-release-25:/drawable-mdpi_splash.png.flat",
         "source": "com.reservafeijoada.twa.app-main-26:/drawable-mdpi/splash.png"
+    },
+    {
+        "merged": "com.reservafeijoada.twa.app-release-25:/drawable-xhdpi_shortcut_0.png.flat",
+        "source": "com.reservafeijoada.twa.app-main-26:/drawable-xhdpi/shortcut_0.png"
     }
 ]

@@ -115,7 +115,7 @@ function ClientBottomNav() {
                         onClick={handleHaptic}
                         className={`nav-item tap-feedback ${isActive(item.href) ? "active" : ""}`}
                     >
-                        <item.icon />
+                        <item.icon size={24} />
                         <span>{item.label}</span>
                     </Link>
                 ))}
@@ -125,8 +125,8 @@ function ClientBottomNav() {
                     className={`nav-item tap-feedback ${drawerOpen ? "active" : ""}`}
                     style={{ background: "none", border: "none", cursor: "pointer" }}
                 >
-                    {drawerOpen ? <X /> : <Menu />}
-                    <span>Menu</span>
+                    {drawerOpen ? <X size={24} /> : <Menu size={24} />}
+                    <span>Mais</span>
                 </button>
             </nav>
         </>

@@ -10,13 +10,15 @@ const config = {
 
 const prompts = [
     { name: 'license', pattern: /Accept\? \(y\/N\):/, answer: 'y' },
+    { name: 'applyChanges', pattern: /\? There are changes in twa-manifest\.json\. Would you like to apply them/, answer: 'y' },
     { name: 'pass1', pattern: /\? Password for the Key Store:/, answer: config.password },
     { name: 'keyPass1', pattern: /\? Password for the Key:/, answer: config.keyPassword }
 ].map(p => ({ ...p, matched: false }));
 
 const bubblewrap = spawn('bubblewrap', ['build'], {
     stdio: ['pipe', 'pipe', 'inherit'],
-    shell: true
+    shell: true,
+    cwd: 'android-app'
 });
 
 let outputBuffer = '';

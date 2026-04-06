@@ -20,9 +20,28 @@
     "path": "/home/helenilson/Documentos/projetos/reserva-feijoada/android-app/android.keystore",
     "alias": "android"
   },
-  "appVersionName": "1",
-  "appVersionCode": 1,
-  "shortcuts": [],
+  "appVersionName": "3",
+  "appVersionCode": 3,
+  "shortcuts": [
+    {
+      "name": "Reservar Agora",
+      "shortName": "Reservar",
+      "url": "https://reserva-feijoada.vercel.app/reservar",
+      "chosenIconUrl": "https://reserva-feijoada.vercel.app/icon-192.png"
+    },
+    {
+      "name": "Maquininha",
+      "shortName": "Maquininha",
+      "url": "https://reserva-feijoada.vercel.app/admin/maquininha",
+      "chosenIconUrl": "https://reserva-feijoada.vercel.app/icon-192.png"
+    },
+    {
+      "name": "Minhas Reservas",
+      "shortName": "Reservas",
+      "url": "https://reserva-feijoada.vercel.app/admin/reservas",
+      "chosenIconUrl": "https://reserva-feijoada.vercel.app/icon-192.png"
+    }
+  ],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://reserva-feijoada.vercel.app/manifest.json",
   "fallbackType": "customtabs",
@@ -43,5 +62,5 @@
   "fileHandlers": [],
   "launchHandlerClientMode": "",
   "displayOverride": [],
-  "appVersion": "1"
+  "appVersion": "3"
 }

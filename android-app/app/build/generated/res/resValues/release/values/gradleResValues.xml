@@ -42,6 +42,18 @@
     <!-- Value from default config. -->
     <string name="providerAuthority" translatable="false">com.reservafeijoada.twa.fileprovider</string>
     <!-- Value from default config. -->
+    <string name="shortcut_name_0" translatable="false">Reservar Agora</string>
+    <!-- Value from default config. -->
+    <string name="shortcut_name_1" translatable="false">Maquininha</string>
+    <!-- Value from default config. -->
+    <string name="shortcut_name_2" translatable="false">Minhas Reservas</string>
+    <!-- Value from default config. -->
+    <string name="shortcut_short_name_0" translatable="false">Reservar</string>
+    <!-- Value from default config. -->
+    <string name="shortcut_short_name_1" translatable="false">Maquininha</string>
+    <!-- Value from default config. -->
+    <string name="shortcut_short_name_2" translatable="false">Reservas</string>
+    <!-- Value from default config. -->
     <string name="webManifestUrl" translatable="false">https://reserva-feijoada.vercel.app/manifest.json</string>
 
 </resources>
