@@ -40,7 +40,7 @@ export default function Header() {
                 <Link href="/" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Início</Link>
                 <Link href="/menu" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Cardápio</Link>
                 <Link href="/reservar" style={{ color: 'var(--text)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 500 }}>Fazer Reserva</Link>
-                <Link href="/reservas" style={{ color: 'var(--primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>📦 Consultar Pedidos</Link>
+                <Link href="/admin/reservas" style={{ color: 'var(--primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>📦 Administração</Link>
             </nav>
 
             {/* Desktop CTA */}
@@ -121,9 +121,9 @@ export default function Header() {
                 className="mobile-drawer"
             >
                 <Link href="/" style={linkStyle} onClick={closeMenu}>🏠 Início</Link>
-                <Link href="/#info" style={linkStyle} onClick={closeMenu}>🍽️ Cardápio</Link>
-                <Link href="/#reservar" style={linkStyle} onClick={closeMenu}>📋 Fazer Reserva</Link>
-                <Link href="/reservas" style={{ ...linkStyle, color: 'var(--primary)', borderBottom: 'none' }} onClick={closeMenu}>📦 Consultar Pedidos</Link>
+                <Link href="/menu" style={linkStyle} onClick={closeMenu}>🍽️ Cardápio</Link>
+                <Link href="/reservar" style={linkStyle} onClick={closeMenu}>📋 Fazer Reserva</Link>
+                <Link href="/admin/reservas" style={{ ...linkStyle, color: 'var(--primary)', borderBottom: 'none' }} onClick={closeMenu}>📦 Administração</Link>
 
                 <Link
                     href="/#reservar"
@@ -145,9 +145,14 @@ export default function Header() {
             </nav>
 
             <style>{`
-                @media (max-width: 640px) {
-                    .desktop-nav { display: none !important; }
-                    .hamburger-btn { display: flex !important; }
+                /* Desktop: mostrar nav links e botão CTA, esconder hamburger */
+                @media (max-width: 768px) {
+                    header { display: none !important; }
+                }
+                @media (min-width: 769px) {
+                    .desktop-nav { display: flex !important; }
+                    .hamburger-btn { display: none !important; }
+                    .mobile-drawer { display: none !important; }
                 }
             `}</style>
         </header>

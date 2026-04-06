@@ -1,5 +1,6 @@
-import { sql } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { updateReservationSchema } from '@/lib/schemas';
+import { ReservationService } from '@/lib/services/reservation-service';
 
 export async function PATCH(
     req: Request,
@@ -8,35 +9,26 @@ export async function PATCH(
     try {
         const { id } = await params;
         const body = await req.json();
-        const { payment_status, pickup_status, customer_name, phone, guests } = body;
+
+        // Validate partial update
+        const validation = updateReservationSchema.partial().safeParse(body);
+        
+        if (!validation.success) {
+            return NextResponse.json({ 
+                error: 'Dados inválidos.', 
+                details: validation.error.format() 
+            }, { status: 400 });
+        }
 
         if (!id) {
             return NextResponse.json({ error: 'ID é obrigatório.' }, { status: 400 });
         }
 
-        if (payment_status !== undefined) {
-            await sql`UPDATE reservations SET payment_status = ${payment_status} WHERE id = ${id}`;
-        }
-
-        if (pickup_status !== undefined) {
-            await sql`UPDATE reservations SET pickup_status = ${pickup_status} WHERE id = ${id}`;
-        }
-
-        if (customer_name !== undefined) {
-            await sql`UPDATE reservations SET customer_name = ${customer_name} WHERE id = ${id}`;
-        }
-
-        if (phone !== undefined) {
-            await sql`UPDATE reservations SET phone = ${phone} WHERE id = ${id}`;
-        }
-
-        if (guests !== undefined) {
-            await sql`UPDATE reservations SET guests = ${guests} WHERE id = ${id}`;
-        }
-
+        await ReservationService.update(id, validation.data);
         return NextResponse.json({ message: 'Reserva atualizada com sucesso.' });
     } catch (error) {
-        return NextResponse.json({ error: 'Erro ao atualizar status.' }, { status: 500 });
+        console.error('Update error:', error);
+        return NextResponse.json({ error: 'Erro ao atualizar reserva.' }, { status: 500 });
     }
 }
 
@@ -50,7 +42,7 @@ export async function DELETE(
             return NextResponse.json({ error: 'ID é obrigatório.' }, { status: 400 });
         }
 
-        await sql`DELETE FROM reservations WHERE id = ${id}`;
+        await ReservationService.delete(id);
         return NextResponse.json({ message: 'Reserva excluída com sucesso.' });
     } catch (error) {
         return NextResponse.json({ error: 'Erro ao excluir reserva.' }, { status: 500 });

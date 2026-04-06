@@ -6,8 +6,10 @@ import { Utensils } from "lucide-react";
 
 export default function SplashScreen() {
     const [isVisible, setIsVisible] = useState(true);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const timer = setTimeout(() => {
             setIsVisible(false);
         }, 2500);
@@ -17,7 +19,7 @@ export default function SplashScreen() {
 
     return (
         <AnimatePresence>
-            {isVisible && (
+            {isVisible && mounted && (
                 <motion.div
                     initial={{ opacity: 1 }}
                     exit={{

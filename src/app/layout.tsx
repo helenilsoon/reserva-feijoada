@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import SplashScreen from "@/components/SplashScreen";
 import BottomNav from "@/components/BottomNav";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Reserva de Feijoada | Sabor & Tradição",
@@ -22,6 +23,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,10 +32,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+          strategy="beforeInteractive"
+        />
+      </head>
       <body>
-        <SplashScreen />
-        {children}
-        <BottomNav />
+        <Providers>
+          <SplashScreen />
+          {children}
+          <BottomNav />
+        </Providers>
       </body>
     </html>
   );

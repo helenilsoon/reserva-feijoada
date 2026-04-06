@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 
 interface Toast {
     id: number;
@@ -9,25 +15,111 @@ interface Toast {
     exiting?: boolean;
 }
 
+interface EventConfig {
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  price: number;
+  delivery_enabled?: boolean;
+  delivery_fee?: number;
+}
+
 export default function ReservationForm({
     reservation,
     onSuccess
 }: {
-    reservation?: { id: number; customer_name: string; phone: string; guests: number };
+    reservation?: { 
+        id: number; 
+        customer_name: string; 
+        phone: string; 
+        guests: number;
+        delivery_type?: 'retirada' | 'entrega';
+        address?: string;
+    };
     onSuccess?: () => void;
 }) {
+    const [eventConfig, setEventConfig] = useState<EventConfig>({
+        title: 'Feijoada Solidária',
+        date: '2026-03-08',
+        time: '11:00',
+        location: 'Retirada na Igreja',
+        price: 20.00
+    });
+
     const [formData, setFormData] = useState({
         name: reservation?.customer_name || '',
         phone: reservation?.phone || '',
-        date: '2026-03-08',
-        time: '11:00',
-        guests: reservation?.guests || 1
+        date: eventConfig.date,
+        time: eventConfig.time,
+        guests: reservation?.guests || 1,
+        delivery_type: reservation?.delivery_type || 'retirada',
+        address: reservation?.address || ''
     });
+    
+    // Sync formData with reservation info if it changes (e.g. modal opening)
+    useEffect(() => {
+        if (reservation) {
+            setFormData(prev => ({
+                ...prev,
+                name: reservation.customer_name,
+                phone: reservation.phone,
+                guests: reservation.guests,
+                delivery_type: reservation.delivery_type || 'retirada',
+                address: reservation.address || ''
+            }));
+        }
+    }, [reservation]);
     const [loading, setLoading] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
+    const autocompleteRef = useRef<any>(null);
+    const addressInputRef = useRef<HTMLInputElement>(null);
 
-    const MARMITA_PRICE = 20.00;
-    const totalPrice = formData.guests * MARMITA_PRICE;
+    const deliveryFee = formData.delivery_type === 'entrega' ? (eventConfig.delivery_fee || 0) : 0;
+    const totalPrice = (formData.guests * eventConfig.price) + deliveryFee;
+
+    // Initialize Google Autocomplete
+    useEffect(() => {
+        if (formData.delivery_type === 'entrega' && typeof window !== 'undefined' && window.google) {
+            const initAutocomplete = () => {
+                if (!addressInputRef.current) return;
+                
+                autocompleteRef.current = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+                    componentRestrictions: { country: 'br' },
+                    fields: ['address_components', 'formatted_address', 'geometry'],
+                    types: ['address']
+                });
+
+                autocompleteRef.current.addListener('place_changed', () => {
+                    const place = autocompleteRef.current.getPlace();
+                    if (place.formatted_address) {
+                        setFormData(prev => ({ ...prev, address: place.formatted_address }));
+                    }
+                });
+            };
+
+            // Small delay to ensure the textarea is rendered
+            const timer = setTimeout(initAutocomplete, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [formData.delivery_type]);
+
+    // Fetch event config
+    useEffect(() => {
+        fetch('/api/settings')
+            .then(res => res.json())
+            .then(data => {
+                if (data && !data.error) {
+                    setEventConfig(data);
+                    setFormData(prev => ({
+                        ...prev,
+                        date: data.date,
+                        time: data.time
+                    }));
+                }
+            })
+            .catch(err => console.error('Erro ao buscar configurações:', err));
+    }, []);
 
     // Format phone as (XX) XXXXX-XXXX
     const formatPhone = (value: string) => {
@@ -103,7 +195,9 @@ export default function ReservationForm({
                     body: JSON.stringify({
                         customer_name: formData.name,
                         phone: formData.phone,
-                        guests: formData.guests
+                        guests: formData.guests,
+                        delivery_type: formData.delivery_type,
+                        address: formData.address
                     }),
                 });
 
@@ -133,7 +227,8 @@ export default function ReservationForm({
                             body: JSON.stringify({
                                 reservationId: data.id,
                                 guests: formData.guests,
-                                name: formData.name
+                                name: formData.name,
+                                delivery_type: formData.delivery_type
                             }),
                         });
 
@@ -148,7 +243,15 @@ export default function ReservationForm({
                         }
                     } else {
                         showToast('success', '✅ Reserva feita! Pague na retirada ou via PIX depois.');
-                        setFormData({ name: '', phone: '', date: '2026-03-08', time: '11:00', guests: 1 });
+                        setFormData({ 
+                            name: '', 
+                            phone: '', 
+                            date: eventConfig.date, 
+                            time: eventConfig.time, 
+                            guests: 1,
+                            delivery_type: 'retirada',
+                            address: ''
+                        });
                     }
                 } else {
                     showToast('error', data.error || 'Erro ao realizar reserva.');
@@ -159,6 +262,17 @@ export default function ReservationForm({
             showToast('error', 'Erro de conexão com o servidor.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const formatDateDisplayName = (dateStr: string) => {
+        try {
+            const [year, month, day] = dateStr.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            const weekday = date.toLocaleDateString('pt-BR', { weekday: 'long' });
+            return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${day}/${month}`;
+        } catch (err) {
+            return dateStr;
         }
     };
 
@@ -175,9 +289,9 @@ export default function ReservationForm({
                     border: '1px solid rgba(212, 160, 23, 0.4)',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
                 }}>
-                    <h3 className="title-md" style={{ color: 'var(--primary)', marginBottom: '8px' }}>{reservation ? 'Editar Reserva' : 'Feijoada Solidária'}</h3>
-                    <p style={{ fontWeight: '700', fontSize: '1.1rem', color: 'white' }}>📅 Domingo, 08/03 às 11:00</p>
-                    <p className="text-sm" style={{ color: 'var(--text-muted)', marginTop: '4px' }}>Local: Retirada na Igreja</p>
+                    <h3 className="title-md" style={{ color: 'var(--primary)', marginBottom: '8px' }}>{reservation ? 'Editar Reserva' : eventConfig.title}</h3>
+                    <p style={{ fontWeight: '700', fontSize: '1.1rem', color: 'white' }}>📅 {formatDateDisplayName(eventConfig.date)} às {eventConfig.time}</p>
+                    <p className="text-sm" style={{ color: 'var(--text-muted)', marginTop: '4px' }}>Local: {eventConfig.location}</p>
                 </div>
 
                 <div className="input-group">
@@ -230,6 +344,78 @@ export default function ReservationForm({
                     </div>
                 </div>
 
+                {/* Delivery Type Selection */}
+                {eventConfig.delivery_enabled && (
+                    <div className="input-group" style={{ background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
+                        <label style={{ display: 'block', marginBottom: '15px', fontSize: '0.9rem', fontWeight: '600', color: 'white' }}>Como deseja receber?</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, delivery_type: 'retirada' })}
+                                style={{
+                                    padding: '12px',
+                                    borderRadius: '10px',
+                                    border: '1px solid',
+                                    borderColor: formData.delivery_type === 'retirada' ? 'var(--primary)' : 'var(--glass-border)',
+                                    background: formData.delivery_type === 'retirada' ? 'rgba(212, 160, 23, 0.1)' : 'transparent',
+                                    color: formData.delivery_type === 'retirada' ? 'var(--primary)' : 'var(--text-muted)',
+                                    fontSize: '0.85rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                🏪 Retirada
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData({ ...formData, delivery_type: 'entrega' })}
+                                style={{
+                                    padding: '12px',
+                                    borderRadius: '10px',
+                                    border: '1px solid',
+                                    borderColor: formData.delivery_type === 'entrega' ? 'var(--primary)' : 'var(--glass-border)',
+                                    background: formData.delivery_type === 'entrega' ? 'rgba(212, 160, 23, 0.1)' : 'transparent',
+                                    color: formData.delivery_type === 'entrega' ? 'var(--primary)' : 'var(--text-muted)',
+                                    fontSize: '0.85rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                🛵 Entrega
+                            </button>
+                        </div>
+
+                        {formData.delivery_type === 'entrega' && (
+                            <div className="animate-fade-in" style={{ marginTop: '15px' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Endereço de Entrega</label>
+                                <input
+                                    ref={addressInputRef}
+                                    type="text"
+                                    required
+                                    value={formData.address}
+                                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                    placeholder="Comece a digitar seu endereço..."
+                                    style={{
+                                        width: '100%',
+                                        padding: '14px',
+                                        background: 'rgba(0,0,0,0.2)',
+                                        border: '1px solid var(--glass-border)',
+                                        borderRadius: '12px',
+                                        color: 'white',
+                                        fontSize: '0.9rem'
+                                    }}
+                                />
+                                <p style={{ fontSize: '0.75rem', color: 'var(--primary)', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <span>✨</span> Taxa de entrega: R$ {eventConfig.delivery_fee?.toFixed(2)}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+
                 {/* Total Price Display */}
                 <div style={{
                     textAlign: 'right',
@@ -252,7 +438,7 @@ export default function ReservationForm({
                     <button
                         onClick={(e) => handleSubmit(e, !reservation?.id)}
                         type="button"
-                        className="btn-primary"
+                        className="tap-feedback btn-primary"
                         disabled={loading}
                         style={{ width: '100%', fontSize: '1.05rem', padding: '18px', borderRadius: '14px' }}
                     >
@@ -263,6 +449,7 @@ export default function ReservationForm({
                         <button
                             onClick={(e) => handleSubmit(e, false)}
                             type="button"
+                            className="tap-feedback"
                             disabled={loading}
                             style={{
                                 width: '100%',
@@ -336,7 +523,7 @@ export default function ReservationForm({
                                                 showToast('success', 'Chave PIX copiada! 📋');
                                             }
                                         }}
-                                        className="btn-primary"
+                                        className="tap-feedback btn-primary"
                                         style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
                                     >
                                         Copiar Chave PIX
@@ -363,7 +550,7 @@ export default function ReservationForm({
                                         setShowModal(false);
                                         window.location.reload();
                                     }}
-                                    className="btn-primary"
+                                    className="tap-feedback btn-primary"
                                     style={{
                                         padding: '16px 40px',
                                         background: '#25d366',
@@ -378,6 +565,7 @@ export default function ReservationForm({
                         {!paymentConfirmed && (
                             <button
                                 onClick={() => setShowModal(false)}
+                                className="tap-feedback"
                                 style={{
                                     background: 'transparent',
                                     border: 'none',

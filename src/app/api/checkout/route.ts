@@ -1,27 +1,41 @@
 import { NextResponse } from 'next/server';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { sql } from '@/lib/db';
 
 export async function POST(req: Request) {
     try {
-        const { reservationId, guests, name, amount } = await req.json();
+        const body = await req.json();
+        const { reservationId, guests, name, amount, delivery_type } = body;
 
         if (!reservationId && !amount) {
             return NextResponse.json({ error: 'ID da reserva ou valor manual é obrigatório.' }, { status: 400 });
         }
 
         const token = process.env.MP_ACCESS_TOKEN;
-        console.log('DEBUG TOKEN:', token ? `tam=${token.length}, prefixo=${token.substring(0, 8)}` : 'VAZIO/INDEFINIDO');
-
         if (!token) {
             return NextResponse.json({ error: 'MP_ACCESS_TOKEN não configurado.' }, { status: 500 });
         }
 
-        // Cria o cliente DENTRO da função para garantir que o env seja sempre carregado
         const client = new MercadoPagoConfig({ accessToken: token });
         const payment = new Payment(client);
 
-        const pricePerUnit = 20.00;
-        const totalAmount = amount || (pricePerUnit * (guests || 1));
+        // Busca o preço dinâmico do banco de dados
+        let pricePerUnit = 20.00; // fallback
+        let deliveryFee = 0;
+        try {
+            const settingsResult = await sql`SELECT value FROM settings WHERE key = 'event_config'`;
+            if (settingsResult.length > 0) {
+                const config = settingsResult[0].value as any;
+                if (config.price) pricePerUnit = parseFloat(config.price);
+                if (delivery_type === 'entrega' && config.delivery_enabled) {
+                    deliveryFee = parseFloat(config.delivery_fee || 0);
+                }
+            }
+        } catch (err) {
+            console.error('Erro ao buscar preço dinâmico:', err);
+        }
+        
+        const totalAmount = amount || (pricePerUnit * (guests || 1)) + deliveryFee;
 
         const webhookUrl = process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL;
 
