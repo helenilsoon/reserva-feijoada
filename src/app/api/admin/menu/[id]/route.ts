@@ -5,10 +5,11 @@ import { handleApiError } from '@/lib/error-handler';
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
     const body = await req.json();
     const validatedData = menuItemSchema.partial().parse(body);
     const updatedItem = await MenuService.update(id, validatedData);
@@ -25,10 +26,11 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: idStr } = await params;
+    const id = parseInt(idStr);
     const deleted = await MenuService.delete(id);
     
     if (!deleted) {
@@ -40,3 +42,4 @@ export async function DELETE(
     return handleApiError(error);
   }
 }
+

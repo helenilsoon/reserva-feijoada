@@ -26,53 +26,89 @@ export async function POST(req: Request) {
         }
 
         if (paymentId) {
-            console.log(`[Webhook] Processando pagamento ID: ${paymentId}`);
+            console.log(`[Webhook] Processando ID: ${paymentId}`);
             const token = process.env.MP_ACCESS_TOKEN;
 
             if (!token) {
-                console.error('[Webhook] ERRO: MP_ACCESS_TOKEN não configurado no servidor');
-                return NextResponse.json({ error: 'Erro de configuração' }, { status: 500 });
+                console.error('[Webhook] ERRO: MP_ACCESS_TOKEN ausente!');
+                return NextResponse.json({ error: 'Configuração' }, { status: 500 });
             }
 
             const client = new MercadoPagoConfig({ accessToken: token });
             const payment = new Payment(client);
 
             try {
-                console.log(`[Webhook] Buscando detalhes do pagamento ${paymentId} no Mercado Pago...`);
                 const details = await payment.get({ id: paymentId });
-                const status = details.status;
+                const status = details.status?.toLowerCase();
                 const reservationId = details.external_reference;
 
-                console.log(`[Webhook] Resposta MP: ID=${paymentId}, Status=${status}, RefExterna=${reservationId}`);
+                console.log(`[Webhook TRACE] Pago: ${paymentId}, Status: ${status}, Ref: ${reservationId}`);
 
-                if (status === 'approved' && reservationId) {
+                if ((status === 'approved' || status === 'authorized') && reservationId) {
                     if (reservationId.startsWith('manual_')) {
-                        console.log(`[Webhook] Pagamento manual ${reservationId} aprovado. OK.`);
+                        console.log(`[Webhook] Pagamento avulso (Maquininha): ${reservationId}`);
+                        
+                        // Busca o preço atual para estimar o número de marmitas
+                        let price = 20.0;
+                        try {
+                            const settingsResult = await sql`SELECT value FROM settings WHERE key = 'event_config'`;
+                            if (settingsResult.length > 0) {
+                                price = parseFloat((settingsResult[0].value as any).price || 20.0);
+                            }
+                        } catch (e) {}
+
+                        const amount = details.transaction_amount || 0;
+                        const guests = Math.max(1, Math.round(amount / (price || 20)));
+
+                        console.log(`[Webhook] Criando registro de venda PDV: R$ ${amount} (${guests} marmitas)`);
+
+                        // Cria um registro na tabela reservations vindo do PDV
+                        await sql`
+                            INSERT INTO reservations (
+                                customer_name, customer_email, phone, 
+                                reservation_date, reservation_time,
+                                guests, total_price,
+                                delivery_type, payment_status, 
+                                source, created_at
+                            ) VALUES (
+                                ${details.payer?.first_name || 'Cliente (PDV)'}, 
+                                ${details.payer?.email || 'pdv@feijoada.com'}, 
+                                'PDV', 
+                                CURRENT_DATE,
+                                CURRENT_TIME,
+                                ${guests}, 
+                                ${amount},
+                                'retirada', 
+                                'Pago', 
+                                'pos', 
+                                NOW()
+                            )
+                        `;
                     } else {
-                        const resIdFormatted = parseInt(reservationId);
-                        console.log(`[Webhook] Atualizando reserva ${resIdFormatted} para 'Pago'...`);
+                        const id = parseInt(reservationId);
+                        console.log(`[Webhook] Tentando atualizar reserva #${id}...`);
 
                         const result = await sql`
                             UPDATE reservations 
                             SET payment_status = 'Pago' 
-                            WHERE id = ${resIdFormatted}
-                            RETURNING id
+                            WHERE id = ${id}
+                            RETURNING id, payment_status
                         `;
 
-                        if (result && result.length > 0) {
-                            console.log(`[Webhook] SUCESSO: Reserva ${resIdFormatted} atualizada.`);
+                        if (result.length > 0) {
+                            console.log(`[Webhook SUCCESS] Reserva ${id} agora é: ${result[0].payment_status}`);
                         } else {
-                            console.warn(`[Webhook] AVISO: Reserva ${resIdFormatted} não encontrada no banco.`);
+                            console.warn(`[Webhook NOT_FOUND] ID ${id} não existe no DB.`);
                         }
                     }
                 } else {
-                    console.log(`[Webhook] Pagamento ${paymentId} ignorado (Status: ${status}, Ref: ${reservationId})`);
+                    console.log(`[Webhook SKIP] Ignorado (status: ${status}, ref: ${reservationId})`);
                 }
-            } catch (sdkError) {
-                console.error(`[Webhook] Erro ao consultar API Mercado Pago para ID ${paymentId}:`, sdkError);
+            } catch (sdkError: any) {
+                console.error(`[Webhook ERROR] Falha ao consultar MP (ID ${paymentId}):`, sdkError?.message || sdkError);
             }
         } else {
-            console.log('[Webhook] Notificação recebida, mas nenhum ID de pagamento (topic=payment) foi identificado.');
+            console.log('[Webhook INFO] Notificação recebida sem ID de pagamento reconhecido (Body: ' + JSON.stringify(body) + ')');
         }
 
         // Sempre retorna 200 para confirmar recebimento

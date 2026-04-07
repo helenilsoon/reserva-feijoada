@@ -478,7 +478,14 @@ export default function AdminPage() {
             >
                 {deleteTarget && (
                     <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🗑️</div>
+                        <div style={{ 
+                            width: "80px", height: "80px", borderRadius: "100px", 
+                            background: "rgba(231, 76, 60, 0.1)", color: "#e74c3c",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            margin: "0 auto 24px"
+                        }}>
+                            <Trash2 size={40} className="delete-icon-pulse" />
+                        </div>
                         <p style={{ color: 'var(--text-muted)', marginBottom: '32px', lineHeight: 1.6 }}>
                             Você está prestes a excluir permanentemente o pedido de<br />
                             <strong style={{ color: 'var(--primary)', fontSize: '1.1rem' }}>

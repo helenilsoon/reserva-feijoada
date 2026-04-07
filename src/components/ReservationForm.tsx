@@ -514,7 +514,6 @@ export default function ReservationForm({
                                         <div style={{ width: '40px', height: '40px', border: '4px solid var(--glass-border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                                     </div>
                                 )}
-
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                     <button
                                         onClick={() => {
@@ -529,7 +528,41 @@ export default function ReservationForm({
                                         Copiar Chave PIX
                                     </button>
 
-                                    <div style={{ marginTop: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                    <button
+                                        disabled={loading}
+                                        onClick={async () => {
+                                            if (!reservationId) return;
+                                            setLoading(true);
+                                            try {
+                                                const res = await fetch(`/api/reservations/${reservationId}/status`);
+                                                const data = await res.json();
+                                                if (data.status === 'Pago') {
+                                                    setPaymentConfirmed(true);
+                                                    showToast('success', '🏆 Recebido! Pagamento confirmado.');
+                                                } else {
+                                                    showToast('info', 'Ainda não recebemos. Tente em alguns instantes.');
+                                                }
+                                            } catch (err) {
+                                                showToast('error', 'Ops! Tente novamente em instantes.');
+                                            } finally {
+                                                setLoading(false);
+                                            }
+                                        }}
+                                        className="tap-feedback"
+                                        style={{
+                                            width: '100%',
+                                            padding: '14px',
+                                            fontSize: '0.9rem',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            border: '1px solid var(--glass-border)',
+                                            color: 'white',
+                                            borderRadius: '12px'
+                                        }}
+                                    >
+                                        {loading ? 'Verificando...' : 'Já paguei! Verificar agora 🔄'}
+                                    </button>
+
+                                    <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                                         <div style={{ width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%', animation: 'pulse-gold 1.5s infinite' }}></div>
                                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                                             Aguardando pagamento...

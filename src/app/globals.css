@@ -76,8 +76,10 @@ select:focus {
 h1,
 h2,
 h3,
+h4,
 .brand {
   font-family: 'Playfair Display', serif;
+  color: var(--text);
 }
 
 .premium-gradient {
@@ -398,6 +400,8 @@ button:active {
   font-weight: 900;
   margin-bottom: 0;
   line-height: 1.1;
+  color: white;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
   animation: fadeInDown 0.9s ease forwards;
 }
 
@@ -606,6 +610,26 @@ input:focus {
   }
 }
 
+.delete-icon-pulse {
+  animation: softPulse 2s infinite ease-in-out;
+}
+
+@keyframes softPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(231, 76, 60, 0)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.4)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(231, 76, 60, 0)); }
+}
+
+/* ── SPLASH SCREEN SYNC ───────────────────── */
+body.js-loading #main-app-content {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#main-app-content {
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
 /* ── SPLASH SCREEN ────────────────────────── */
 .splash-container {
   position: fixed;
@@ -767,7 +791,8 @@ input:focus {
 }
 
 .nav-item:active svg {
-  transform: scale(0.9);
+  transform: scale(0.9) translateY(2px);
+  filter: drop-shadow(0 0 8px var(--primary));
 }
 
 /* Ripple effect simulation */

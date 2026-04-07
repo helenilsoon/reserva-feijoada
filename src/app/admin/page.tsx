@@ -85,7 +85,7 @@ export default function AdminDashboard() {
             title: "Relatórios",
             description: "Visualizar métricas de vendas e arrecadação.",
             icon: <TrendingUp size={32} />,
-            href: "/admin/reservas",
+            href: "/admin/relatorios",
             color: "#007bff",
             rgb: "0, 123, 255",
         },

@@ -12,7 +12,9 @@ export default function SplashScreen() {
         setMounted(true);
         const timer = setTimeout(() => {
             setIsVisible(false);
-        }, 2500);
+            // Remove a trava de carregamento do CSS
+            document.body.classList.remove('js-loading');
+        }, 2100); // Um pouco antes de fechar totalmente para transição suave
 
         return () => clearTimeout(timer);
     }, []);

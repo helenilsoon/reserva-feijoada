@@ -22,7 +22,7 @@ export default function Hero() {
         <h1 className="brand text-primary uppercase tracking-[4px] text-sm mb-4">
           Legendário
         </h1>
-        <h2 className="hero-title-main title-xl font-black mb-0">
+        <h2 className="hero-title-main title-xl font-black mb-0 premium-gradient">
           FEIJOADA
         </h2>
         <h2 className="hero-title-sub title-lg italic -mt-2 text-primary">

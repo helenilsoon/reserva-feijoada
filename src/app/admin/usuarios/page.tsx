@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import AdminPageLayout from "@/components/admin/AdminPageLayout";
 import GlassPanel from "@/components/admin/GlassPanel";
 import AdminButton from "@/components/admin/AdminButton";
+import AdminModal from "@/components/admin/AdminModal";
 
 interface AdminUser {
     id: string;
@@ -57,6 +58,10 @@ export default function UsersPage() {
     const [showEditPassword, setShowEditPassword] = useState(false);
     const [editForm, setEditForm] = useState<EditUserForm>({ name: "", email: "", password: "" });
     const [saving, setSaving] = useState(false);
+    
+    // Modal deletar
+    const [deleteUserTarget, setDeleteUserTarget] = useState<AdminUser | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         fetchUsers();
@@ -168,18 +173,21 @@ export default function UsersPage() {
     };
 
     const handleDelete = async (user: AdminUser) => {
-        if (!confirm(`Tem certeza que deseja excluir ${user.name}? Esta ação não pode ser desfeita.`)) return;
+        setDeleting(true);
         try {
             const res = await fetch(`/api/admin/users/${user.id}`, { method: "DELETE" });
             const data = await res.json();
             if (res.ok) {
                 setUsers(prev => prev.filter(u => u.id !== user.id));
                 toast.success("Usuário removido");
+                setDeleteUserTarget(null);
             } else {
                 toast.error(data.error || "Erro ao remover usuário");
             }
         } catch {
             toast.error("Erro de conexão");
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -305,7 +313,7 @@ export default function UsersPage() {
                                                     {/* Botão Deletar — não disponível para superadmin */}
                                                     {user.role !== "superadmin" && (
                                                         <button
-                                                            onClick={() => handleDelete(user)}
+                                                            onClick={() => setDeleteUserTarget(user)}
                                                             title="Remover usuário"
                                                             style={{
                                                                 background: "rgba(231,76,60,0.1)",
@@ -450,6 +458,41 @@ export default function UsersPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Modal de Exclusão Elegante */}
+            <AdminModal
+                isOpen={!!deleteUserTarget}
+                onClose={() => setDeleteUserTarget(null)}
+                title="Remover Usuário?"
+            >
+                <div style={{ textAlign: "center", padding: "10px 0" }}>
+                    <div style={{ 
+                        width: "80px", height: "80px", borderRadius: "100px", 
+                        background: "rgba(231, 76, 60, 0.1)", color: "#e74c3c",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        margin: "0 auto 24px"
+                    }}>
+                        <Trash2 size={40} className="delete-icon-pulse" />
+                    </div>
+                    
+                    <p style={{ color: "white", fontSize: "1.1rem", marginBottom: "8px", fontWeight: 600 }}>
+                        Deseja remover {deleteUserTarget?.name}?
+                    </p>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "32px", lineHeight: 1.6 }}>
+                        Este usuário perderá acesso total ao painel administrativo. 
+                        Esta ação não pode ser desfeita.
+                    </p>
+
+                    <div style={{ display: "flex", gap: "12px" }}>
+                        <AdminButton fullWidth variant="secondary" onClick={() => setDeleteUserTarget(null)} disabled={deleting}>
+                            Cancelar
+                        </AdminButton>
+                        <AdminButton fullWidth variant="danger" onClick={() => deleteUserTarget && handleDelete(deleteUserTarget)} loading={deleting}>
+                            Sim, Remover
+                        </AdminButton>
+                    </div>
+                </div>
+            </AdminModal>
         </AdminPageLayout>
     );
 }

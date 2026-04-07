@@ -19,12 +19,12 @@ export const updateReservationSchema = reservationSchema.partial().extend({
 
 export const settingsSchema = z.object({
   title: z.string().min(3),
-  price: z.number().min(0),
+  price: z.coerce.number().min(0),
   date: z.string(),
   time: z.string(),
   location: z.string(),
   delivery_enabled: z.boolean().default(true),
-  delivery_fee: z.number().min(0).default(0),
+  delivery_fee: z.coerce.number().min(0).default(0),
 });
 
 export const loginSchema = z.object({
@@ -36,7 +36,8 @@ export const menuItemSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório'),
   description: z.string().optional().nullable(),
   items: z.array(z.string()).min(1, 'Pelo menos um item é necessário'),
-  price: z.number().min(0, 'O preço deve ser maior ou igual a zero').default(0),
+  price: z.coerce.number().min(0, 'O preço deve ser maior ou igual a zero').default(0),
   active: z.boolean().default(true),
-  order_index: z.number().int().default(0),
+  order_index: z.coerce.number().int().default(0),
 });
+

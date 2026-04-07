@@ -38,11 +38,13 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body>
+      <body className="js-loading">
         <Providers>
           <SplashScreen />
-          {children}
-          <BottomNav />
+          <div id="main-app-content">
+            {children}
+            <BottomNav />
+          </div>
         </Providers>
       </body>
     </html>

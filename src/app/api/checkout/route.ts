@@ -35,16 +35,24 @@ export async function POST(req: Request) {
             console.error('Erro ao buscar preço dinâmico:', err);
         }
         
-        const totalAmount = amount || (pricePerUnit * (guests || 1)) + deliveryFee;
+        const totalAmountInput = amount ? parseFloat(amount.toString()) : null;
+        const totalAmount = totalAmountInput || (pricePerUnit * (guests || 1)) + deliveryFee;
 
-        const webhookUrl = process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL;
-
-        if (!webhookUrl) {
-            console.warn('AVISO: WEBHOOK_URL ou NEXT_PUBLIC_URL não configurados. Webhook pode não funcionar.');
+        if (!totalAmount || totalAmount <= 0) {
+            return NextResponse.json({ error: 'Valor total inválido.' }, { status: 400 });
         }
 
-        const notificationUrl = `${webhookUrl || 'https://example.com'}/api/webhooks/mercadopago`;
-        console.log(`[Checkout] URL de notificação configurada: ${notificationUrl}`);
+        const webhookUrl = process.env.MP_WEBHOOK_URL || process.env.WEBHOOK_URL || process.env.NEXT_PUBLIC_URL;
+        
+        // Constrói a URL de notificação garantindo que não haja barras duplas e que seja HTTPS
+        let notificationUrl = '';
+        if (webhookUrl) {
+            const baseUrl = webhookUrl.replace(/\/$/, '');
+            notificationUrl = `${baseUrl}/api/webhooks/mercadopago`;
+        }
+
+        console.log(`[Checkout] Token (prefix): ${token.substring(0, 7)}...`);
+        console.log(`[Checkout] Webhook URL: ${notificationUrl || 'NÃO CONFIGURADA'}`);
 
         const response = await payment.create({
             body: {
@@ -77,13 +85,24 @@ export async function POST(req: Request) {
     } catch (error: any) {
         const mpError = error?.cause ?? error?.message ?? String(error);
         console.error('Erro PIX Mercado Pago:', JSON.stringify(mpError));
+        
+        // Debug para arquivo local caso o console não seja acessível
+        const fs = require('fs');
+        try {
+            fs.appendFileSync('checkout_error_log.txt', `[${new Date().toISOString()}] Error: ${JSON.stringify(mpError)}\n`);
+        } catch (e) {}
 
         const errorMessage = Array.isArray(mpError)
             ? mpError.map((c: any) => c.description || c.code).join(', ')
             : (error?.message || 'Erro desconhecido');
 
+        // Se o erro for de token inválido, dar uma dica melhor
+        const finalError = errorMessage.toLowerCase().includes('jwt') || errorMessage.toLowerCase().includes('token')
+            ? 'Token do Mercado Pago Inválido em .env.local. Por favor, verifique suas credenciais.'
+            : errorMessage;
+
         return NextResponse.json(
-            { error: `Erro ao gerar PIX: ${errorMessage}` },
+            { error: `Erro ao gerar PIX: ${finalError}` },
             { status: 500 }
         );
     }

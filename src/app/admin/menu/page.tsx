@@ -5,9 +5,10 @@ import AdminPageLayout from "@/components/admin/AdminPageLayout";
 import GlassPanel from "@/components/admin/GlassPanel";
 import AdminButton from "@/components/admin/AdminButton";
 import AdminInput from "@/components/admin/AdminInput";
-import { Plus, Trash2, Save, X, Utensils, MoveUp, MoveDown, Check, AlertCircle } from "lucide-react";
+import { Plus, Trash2, Save, X, Utensils, MoveUp, MoveDown, Check, AlertCircle, Pencil, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import AdminModal from "@/components/admin/AdminModal";
 
 interface MenuItem {
     id?: number;
@@ -37,6 +38,8 @@ export default function AdminMenuPage() {
         order_index: 0
     });
     const [newItemText, setNewItemText] = useState("");
+    const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         fetchMenuItems();
@@ -130,16 +133,20 @@ export default function AdminMenuPage() {
     };
 
     const deleteItem = async (id: number) => {
-        if (!confirm("Tem certeza que deseja excluir esta seção do cardápio?")) return;
-
+        setDeleting(true);
         try {
             const res = await fetch(`/api/admin/menu/${id}`, { method: "DELETE" });
             if (res.ok) {
                 toast.success("Item removido");
+                setDeleteTarget(null);
                 fetchMenuItems();
+            } else {
+                toast.error("Erro ao excluir");
             }
         } catch (error) {
             toast.error("Erro ao excluir");
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -322,25 +329,41 @@ export default function AdminMenuPage() {
                                             style={{ 
                                                 background: item.active ? "rgba(37, 211, 102, 0.1)" : "rgba(255,255,255,0.05)",
                                                 color: item.active ? "#25d366" : "var(--text-muted)",
-                                                border: "none", padding: "8px", borderRadius: "10px"
+                                                border: "none", padding: "10px", borderRadius: "12px",
+                                                display: "flex", alignItems: "center", justifyContent: "center",
+                                                transition: "all 0.2s ease"
                                             }}
-                                            title={item.active ? "Desativar" : "Ativar"}
+                                            className="tap-feedback"
+                                            title={item.active ? "Ocultar do site" : "Mostrar no site"}
                                         >
-                                            <Check size={18} />
+                                            {item.active ? <Eye size={20} /> : <EyeOff size={20} />}
                                         </button>
                                         <button 
                                             onClick={() => startEditing(item)}
-                                            style={{ background: "rgba(255,255,255,0.05)", color: "white", border: "none", padding: "8px", borderRadius: "10px" }}
+                                            style={{ 
+                                                background: "rgba(212, 160, 23, 0.1)", 
+                                                color: "var(--primary)", 
+                                                border: "none", padding: "10px", borderRadius: "12px",
+                                                display: "flex", alignItems: "center", justifyContent: "center",
+                                                transition: "all 0.2s ease"
+                                            }}
                                             className="tap-feedback"
+                                            title="Editar esta seção"
                                         >
-                                            <Save size={18} />
+                                            <Pencil size={20} />
                                         </button>
                                         <button 
-                                            onClick={() => deleteItem(item.id!)}
-                                            style={{ background: "rgba(231, 76, 60, 0.1)", color: "#e74c3c", border: "none", padding: "8px", borderRadius: "100px" }}
+                                            onClick={() => setDeleteTarget(item.id!)}
+                                            style={{ 
+                                                background: "rgba(231, 76, 60, 0.1)", 
+                                                color: "#e74c3c", 
+                                                border: "none", padding: "10px", borderRadius: "12px",
+                                                display: "flex", alignItems: "center", justifyContent: "center",
+                                                transition: "all 0.2s ease"
+                                            }}
                                             className="tap-feedback"
                                         >
-                                            <Trash2 size={18} />
+                                            <Trash2 size={20} />
                                         </button>
                                     </div>
                                 </GlassPanel>
@@ -356,6 +379,40 @@ export default function AdminMenuPage() {
                         Cada seção em uma categoria aparecerá como um item expansível no site para o cliente.
                     </p>
                 </GlassPanel>
+
+                {/* Modal de Exclusão Elegante */}
+                <AdminModal
+                    isOpen={!!deleteTarget}
+                    onClose={() => setDeleteTarget(null)}
+                    title="Excluir Seção do Cardápio?"
+                >
+                    <div style={{ textAlign: "center", padding: "10px 0" }}>
+                        <div style={{ 
+                            width: "80px", height: "80px", borderRadius: "100px", 
+                            background: "rgba(231, 76, 60, 0.1)", color: "#e74c3c",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            margin: "0 auto 24px"
+                        }}>
+                            <Trash2 size={40} className="delete-icon-pulse" />
+                        </div>
+                        
+                        <p style={{ color: "white", fontSize: "1.1rem", marginBottom: "8px", fontWeight: 600 }}>
+                            Tem certeza que deseja apagar?
+                        </p>
+                        <p style={{ color: "var(--text-muted)", fontSize: "0.9rem", marginBottom: "32px", lineHeight: 1.6 }}>
+                            Esta ação é irreversível e removerá todos os itens desta seção (ex: {menuItems.find(i => i.id === deleteTarget)?.title}) do cardápio visível para os clientes.
+                        </p>
+
+                        <div style={{ display: "flex", gap: "12px" }}>
+                            <AdminButton fullWidth variant="secondary" onClick={() => setDeleteTarget(null)} disabled={deleting}>
+                                Cancelar
+                            </AdminButton>
+                            <AdminButton fullWidth variant="danger" onClick={() => deleteTarget && deleteItem(deleteTarget)} loading={deleting}>
+                                Sim, Excluir
+                            </AdminButton>
+                        </div>
+                    </div>
+                </AdminModal>
             </div>
         </AdminPageLayout>
     );
